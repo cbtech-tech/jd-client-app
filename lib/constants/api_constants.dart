@@ -10,4 +10,9 @@ class ApiConstants {
 
   final liveTrackingApi = "/elixia/vehicle-data";
 
+  final userHistory ="/history/user-history";
+  final feedback ="/user-feedback";
+
+
+  final YOUR_API_KEY = "AIzaSyDqnDn4E0YCF3zaJuS9ez58XOcHhBtNVkc";
 }

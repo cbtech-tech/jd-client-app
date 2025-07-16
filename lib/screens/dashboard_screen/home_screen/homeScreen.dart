@@ -4,8 +4,10 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:just_delivery/constants/image_constants.dart';
 import 'package:just_delivery/customWidgets/textStyle.dart';
+import 'package:just_delivery/routes/app_routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../view_report/viewReportScreen.dart';
 import 'homeController.dart';
 
 class HomeScreen extends GetView<HomeController>{
@@ -56,9 +58,15 @@ class HomeScreen extends GetView<HomeController>{
                       ],
                     ),
                     Spacer(),
-                    Image.asset(
-                      ImageConstants.circularDownload,
-                      width: Get.width * 0.10,
+                    InkWell(
+                      onTap: (){
+                        Get.to(()=>PdfViewerScreen(appBarName:"Consignment Report",url: controller.pdfUrl.toString(),orderId: controller.orderId.toString(),),);
+                        
+                      },
+                      child: Image.asset(
+                        ImageConstants.circularDownload,
+                        width: Get.width * 0.10,
+                      ),
                     ),
                   ],
                 ),
@@ -133,7 +141,7 @@ class HomeScreen extends GetView<HomeController>{
 
                     InkWell(
                       onTap: ()=>controller.makePhoneCall(),
-                      child: Image.asset(ImageConstants.callIcon,width: 40,
+                      child: Image.asset(ImageConstants.truckMapIcon,width: 40,
                         height: 40,),
                     ),
 
@@ -177,6 +185,7 @@ class HomeScreen extends GetView<HomeController>{
       ),
     );
   }
+
 
 
 }

@@ -11,15 +11,20 @@ class ImageConstants {
 
  static const String circularTruck = "assets/images/circular_truck.png";
  static const String completedImg = "assets/images/completed_img.png";
-
  static const String mapMarker ="assets/images/map_marker.png";
-
  static const String truckImg = "assets/images/splash_screen.png";
  static String callIcon = "assets/images/call_icon.png";
-
-
-
  static const String pickupOnTime = "assets/images/pickupOntime.png";
  static String delayImg = "assets/images/delayImg.png";
+
+ static String truckMapIcon = "assets/images/car_logo.png";
+
+ static String loveEmoji = "assets/images/loveEmoji.png";
+
+ static String sadEmoji = "assets/images/sadEmoji.png";
+
+ static String storesMarker = "assets/images/stores_marker.png";
+ static String startPointMarker = "assets/images/start_point_marker.png";
+
 
 }

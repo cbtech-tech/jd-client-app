@@ -40,18 +40,28 @@ AssignedVehicle _$AssignedVehicleFromJson(Map<String, dynamic> json) =>
           json['endPoint'] == null
               ? null
               : Point.fromJson(json['endPoint'] as Map<String, dynamic>),
-      timerStartTime: json['timerStartTime'],
       id: json['_id'] as String?,
       phoneNumber: json['phoneNumber'] as String?,
       vehicleNumber: json['vehicleNumber'] as String?,
+      startPointName: json['startPointName'] as String?,
+      endPointName: json['endPointName'] as String?,
       checkPoint:
           (json['checkPoint'] as List<dynamic>?)
               ?.map((e) => CheckPoint.fromJson(e as Map<String, dynamic>))
               .toList(),
       deliveryStatus: json['deliveryStatus'] as String?,
+      deliveryCompleted: json['deliveryCompleted'] as bool?,
+      vehicleInStore: json['vehicleInStore'] as bool?,
+      timerStartTime: json['timerStartTime'] as String?,
       radius: (json['radius'] as num?)?.toInt(),
       delayStatus: json['delayStatus'] as bool?,
       delayTime: (json['delayTime'] as num?)?.toInt(),
+      natureofGoods: json['natureofGoods'] as String?,
+      companyName: json['companyName'] as String?,
+      consignorName: json['consignorName'] as String?,
+      managerName: json['managerName'] as String?,
+      managerNumber: (json['managerNumber'] as num?)?.toInt(),
+      storeName: json['storeName'] as String?,
       createdAt:
           json['createdAt'] == null
               ? null
@@ -61,44 +71,52 @@ AssignedVehicle _$AssignedVehicleFromJson(Map<String, dynamic> json) =>
               ? null
               : DateTime.parse(json['updatedAt'] as String),
       v: (json['__v'] as num?)?.toInt(),
-      deliveryCompleted: json['deliveryCompleted'] as bool?,
-      vehicleInStore: json['vehicleInStore'] as bool?,
+      consignmentLink: json['consignmentLink'] as String?,
     );
 
 Map<String, dynamic> _$AssignedVehicleToJson(AssignedVehicle instance) =>
     <String, dynamic>{
       'startPoint': instance.startPoint,
       'endPoint': instance.endPoint,
-      'timerStartTime': instance.timerStartTime,
       '_id': instance.id,
       'phoneNumber': instance.phoneNumber,
       'vehicleNumber': instance.vehicleNumber,
+      'startPointName': instance.startPointName,
+      'endPointName': instance.endPointName,
       'checkPoint': instance.checkPoint,
       'deliveryStatus': instance.deliveryStatus,
+      'deliveryCompleted': instance.deliveryCompleted,
+      'vehicleInStore': instance.vehicleInStore,
+      'timerStartTime': instance.timerStartTime,
       'radius': instance.radius,
       'delayStatus': instance.delayStatus,
       'delayTime': instance.delayTime,
+      'natureofGoods': instance.natureofGoods,
+      'companyName': instance.companyName,
+      'consignorName': instance.consignorName,
+      'managerName': instance.managerName,
+      'managerNumber': instance.managerNumber,
+      'storeName': instance.storeName,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
       '__v': instance.v,
-      'deliveryCompleted': instance.deliveryCompleted,
-      'vehicleInStore': instance.vehicleInStore,
+      'consignmentLink': instance.consignmentLink,
     };
 
 CheckPoint _$CheckPointFromJson(Map<String, dynamic> json) => CheckPoint(
-  completed: json['completed'] as bool?,
   lati: (json['lati'] as num?)?.toDouble(),
   longi: (json['longi'] as num?)?.toDouble(),
   name: json['name'] as String?,
+  completed: json['completed'] as bool?,
   id: json['_id'] as String?,
 );
 
 Map<String, dynamic> _$CheckPointToJson(CheckPoint instance) =>
     <String, dynamic>{
-      'completed': instance.completed,
       'lati': instance.lati,
       'longi': instance.longi,
       'name': instance.name,
+      'completed': instance.completed,
       '_id': instance.id,
     };
 
@@ -125,7 +143,7 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
   lastupdated: json['lastupdated'] as String?,
   vehiclespeed: (json['vehiclespeed'] as num?)?.toInt(),
   odometer: (json['odometer'] as num?)?.toInt(),
-  distance: (json['distance'] as num?)?.toInt(),
+  distance: (json['distance'] as num?)?.toDouble(),
   digitalstatus: json['digitalstatus'] as String?,
   temperature1: json['temperature1'] as String?,
   temperature2: json['temperature2'] as String?,

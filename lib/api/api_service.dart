@@ -22,6 +22,8 @@ class ApiService extends GetConnect {
       if (token != null) {
         request.headers['Authorization'] = 'Bearer $token';
       }
+      print('request.header-> ➡️${request.headers['Authorization']}');
+
       print('method and url -> ➡️ ${request.method} ${request.url}');
       return request;
     });

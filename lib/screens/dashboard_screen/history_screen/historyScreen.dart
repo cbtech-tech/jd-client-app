@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:just_delivery/constants/image_constants.dart';
 import 'package:just_delivery/customWidgets/textStyle.dart';
 import 'package:just_delivery/screens/dashboard_screen/history_screen/historyController.dart';
+import 'package:just_delivery/screens/dashboard_screen/history_screen/historyDataModel.dart';
 import 'package:just_delivery/theme/theme_helper.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
+import '../../../customWidgets/customButtom.dart';
+import '../view_report/viewReportScreen.dart';
 
 class HistoryScreen extends GetView<HistoryController>{
   const HistoryScreen({super.key});
@@ -53,6 +58,7 @@ class HistoryScreen extends GetView<HistoryController>{
                           return GestureDetector(
                             onTap: () {
                               controller.selectedIndex.value = index;
+                              controller.filterList( controller.options[index]);
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: Get.width * 0.01),
@@ -82,7 +88,7 @@ class HistoryScreen extends GetView<HistoryController>{
                                   color: isSelected ? Colors.white : Colors.black87,
                                 ),
                               ),
-                            ),
+                            )
                           );
                         }),
                       ),
@@ -93,7 +99,7 @@ class HistoryScreen extends GetView<HistoryController>{
                   GestureDetector(
                     onTap: () {
                       // Handle tap
-                      _showFilterBottomSheet();
+                    //  _showFilterBottomSheet();
 
                     },
                     child: Container(
@@ -125,103 +131,111 @@ class HistoryScreen extends GetView<HistoryController>{
 
           Expanded(
             child: ListView.builder(
-                itemCount: 20,
-                itemBuilder: (context,index) {
-              return Container(
-                height: Get.height*0.175,
-                margin: EdgeInsets.only(left: 12,right: 12,top: 7,bottom: 7),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.all(
-                      Radius.circular(15)
-                  ),
-                ),
+              itemCount: controller.historyList.length,
+              itemBuilder: (context, index) {
+                var model = controller.historyList[index];
 
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                DateTime parsedDate = DateTime.parse(model.assignedVehicle?.updatedAt.toString()??DateTime.now().toString()).toLocal();
+                String formattedDate = DateFormat('dd/MM/yyyy,hh:mma').format(parsedDate);
 
+                return InkWell(
+                  onTap: () => controller.moveToHistory(model),
+                  child: Container(
+                    margin: EdgeInsets.only(left: 12, right: 12, top: 7, bottom: 7),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: const BorderRadius.all(Radius.circular(15)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Image.asset(ImageConstants.circularTruck,width: 60,),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("MH 40 BP 4231"),
-                          SizedBox(height: 5,),
-                          Text("07/05/2025,01:35PM",style: CustomTextStyle.body(fontSize: 16),)
-
-                        ],
-                      ),
-                        Spacer(),
-
-                        Container(
-                          child: Image.asset(ImageConstants.completedImg,width: Get.width*0.25,),
-                        ),
-                        SizedBox(width: 10,),
-
-
-                      ],),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 85.0,right: 10),
-                      child: Divider(),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0,top: 10),
-                      child: Text("rateReview".tr),
-                    ),
-
-                    Obx(() => Padding(
-                      padding: const EdgeInsets.only(left: 15.0,top: 10,right: 15),
-                      child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        Row(
                           children: [
-                            ...List.generate(5, (index) {
-                              bool isFilled = index < controller.rating.value;
-                              return GestureDetector(
-                                onTap: controller.isEditable
-                                    ? () {
-                                  controller.rating.value = index + 1;
-                                }
-                                    : null,
-                                child: Icon(
-                                  isFilled ? Icons.star : Icons.star_border,
-                                  color: ThemeHelper().appColor,
-                                  size: Get.width * 0.07,
-                                ),
-                              );
-                            }),
-                            Spacer(), // spacing between stars and text
-                            GestureDetector(
-                              onTap: () {
-                                // Perform a different action here
-                                controller.onRatingInfoTap(); // example function
-                              },
-                              child:  Text("getReport".tr,style: CustomTextStyle.subHeading(fontSize: 17,color: ThemeHelper().appColor),)
-
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Image.asset(ImageConstants.circularTruck, width: 60),
                             ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("${model.assignedVehicle?.vehicleNumber ?? ''}"),
+                                SizedBox(height: 5),
+                                Text(formattedDate, style: CustomTextStyle.body(fontSize: 16)),
+                              ],
+                            ),
+                            Spacer(),
+                            Container(
+                              child: Image.asset(ImageConstants.completedImg, width: Get.width * 0.25),
+                            ),
+                            SizedBox(width: 10),
                           ],
                         ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 85.0, right: 10),
+                          child: Divider(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15.0, top: 10),
+                          child: Text("rateReview".tr),
+                        ),
+                        Obx(() => Padding(
+                          padding: const EdgeInsets.only(left: 15.0, top: 10, right: 15),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ...List.generate(5, (starIndex) {
+                                bool isFilled = starIndex < controller.rating.value;
+                                return GestureDetector(
+                                  onTap: controller.isEditable.value
+                                      ? () {
+                                    var rating = starIndex + 1;
+                                    if (rating <= 2) {
+                                      feedback(model);
+                                    } else {
+                                      controller.setFeedbackToApi(model);
+                                      showThankYouDialog(controller.rating.value);
+                                    }
+                                  }
+                                      : null,
+                                  child: Icon(
+                                    isFilled ? Icons.star : Icons.star_border,
+                                    color: ThemeHelper().appColor,
+                                    size: Get.width * 0.07,
+                                  ),
+                                );
+                              }),
+                              Spacer(),
+                              GestureDetector(
+                                onTap: () {
+                                  Get.to(PdfViewerScreen(
+                                    appBarName: "Report",
+                                    url: model?.reportLink ?? "",
+                                    orderId: model?.liveDataArr?[0].unitno.toString() ?? "",
+                                  ));
+                                },
+                                child: Text(
+                                  "getReport".tr,
+                                  style: CustomTextStyle.subHeading(
+                                    fontSize: 17,
+                                    color: ThemeHelper().appColor,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+
+                        SizedBox(height: 10,)
+
+                      ],
                     ),
-                    ),
-
-
-
-
-                  ],
-
-                ),
-
-              );
-            }),
+                  ),
+                );
+              },
+            ),
           )
+
 
 
 
@@ -442,6 +456,147 @@ class HistoryScreen extends GetView<HistoryController>{
           ),
         ),
       ),
+    );
+  }
+
+
+
+  void feedback(Datum model) {
+
+    Get.bottomSheet(
+      Container(
+        height: Get.height*0.7,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            Row(
+              children: [
+                Spacer(),
+                InkWell(
+                    onTap: ()=>Get.back(),
+                    child: Icon(Icons.close))
+              ],
+            ),
+
+
+            Center(child: Image.asset(ImageConstants.sadEmoji,width: 80,height: 80,)),
+            // Live chip updates with Obx
+
+            SizedBox(height: 20,),
+
+            Text("Please choose one  or more concerns.",style: CustomTextStyle.subHeading(),),
+            SizedBox(height: 20,),
+
+            Obx(() => Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: controller.feedback.map((item) {
+                final isSelected = controller.selectedFeedback.contains(item);
+
+                return ChoiceChip(
+                  showCheckmark: false,
+                  iconTheme: IconThemeData(color: Colors.white),
+                  label: Text(
+                    item,
+                    style:
+                    isSelected ?
+                    CustomTextStyle.subHeading(
+                        color: isSelected ? Colors.white : Colors.black,
+                        fontSize: 14
+
+                    ):CustomTextStyle.body(
+                      color: isSelected ? Colors.white : Colors.black,
+
+                    ),
+                  ),
+                  selected: isSelected,
+                  onSelected: (_) {
+                    controller.toggleSelection(item);
+                  },
+                  selectedColor: ThemeHelper().appColor,
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(
+                      color: isSelected ? ThemeHelper().appColor : Colors.grey.shade400,
+                    ),
+                  ),
+                );
+              }).toList(),
+            )),
+
+            const Spacer(),
+
+            // Submit button
+            CustomButton(
+              text: "Submit",
+              onTap: () {
+                final selectedItems = controller.selectedFeedback.toList();
+                print("Selected feedback: $selectedItems");
+                controller.setFeedbackToApi(model);
+                Get.back();
+              },
+            )
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+    );
+  }
+
+  void showThankYouDialog(int value) {
+
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(child: Image.asset(ImageConstants.loveEmoji,height: 80,width: 80,),),
+
+              SizedBox(height: 20,),
+
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ...List.generate(5, (index) {
+                    bool isFilled = index < controller.rating.value;
+                    return GestureDetector(
+                      onTap: null
+
+                         ,
+                      child: Icon(
+                        isFilled ? Icons.star : Icons.star_border,
+                        color: ThemeHelper().appColor,
+                        size: Get.width * 0.07,
+                      ),
+                    );
+                  }),
+
+
+                ],
+              ),
+              SizedBox(height: 20,),
+
+              CustomButton(text: "Thank You", onTap: (){
+                Get.back();
+              }),
+              SizedBox(height: 20,),
+
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true,
     );
   }
 

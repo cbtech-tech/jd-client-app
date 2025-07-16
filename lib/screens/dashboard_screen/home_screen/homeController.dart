@@ -13,8 +13,9 @@ import '../../../constants/api_constants.dart';
 import 'liveTracking/liveTrackingDataModel.dart';
 
 class HomeController extends GetxController {
-  RxString storeName = "Blue Tokai".obs;
+  RxString storeName = "".obs;
   RxString deliveryStatus = "Pickup On-time".obs;
+  final apiKey = "AIzaSyDqnDn4E0YCF3zaJuS9ez58XOcHhBtNVkc";
 
   final ApiService apiService = Get.find();
   LiveTrackingModel? liveTrackingModel;
@@ -24,29 +25,70 @@ class HomeController extends GetxController {
   final RxSet<Polyline> polyLines = <Polyline>{}.obs;
 
   var driverName = "".obs;
+  var managerNumber = "".obs;
   var vehicleNumber = "".obs;
   var temp = "".obs;
   var totalDistance = "".obs;
   var orderId = "".obs;
+  var pdfUrl = "".obs;
+  late BitmapDescriptor vehicleIcon;
+  late BitmapDescriptor startPointIcon;
+  late BitmapDescriptor checkPointsIcon;
+
 
   @override
   Future<void> onInit() async {
     super.onInit();
+    _loadCustomMarker();
+
     startLiveDataFetching();
   }
 
-  void startLiveDataFetching() {
-    fetchLiveData();
-    _liveDataTimer = Timer.periodic(Duration(minutes: 1), (_) => fetchLiveData());
+  void _loadCustomMarker() async {
+   try {
+     vehicleIcon = await BitmapDescriptor.asset(
+       const ImageConfiguration(size: Size(48, 48)), // Adjust size if needed
+       ImageConstants.truckMapIcon,
+     );
+     startPointIcon = await BitmapDescriptor.asset(
+       const ImageConfiguration(size: Size(48, 48)), // Adjust size if needed
+       ImageConstants.startPointMarker,
+     );
+     checkPointsIcon = await BitmapDescriptor.asset(
+       const ImageConfiguration(size: Size(48, 48)), // Adjust size if needed
+       ImageConstants.storesMarker,
+     );
+   }
+   catch(e){
+     print("==>>>e.toString() ${e.toString()}");
+   }
   }
+
+
+  void startLiveDataFetching() {
+
+    fetchLiveData();
+    _liveDataTimer = Timer.periodic(Duration(seconds: 30), (_) => fetchLiveData());
+
+  }
+
+
+
+
+
 
   void stopLiveDataFetching() {
     _liveDataTimer?.cancel();
   }
 
+
+
+
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
+
+
 
   Future<void> fetchLiveData() async {
     try {
@@ -54,11 +96,13 @@ class HomeController extends GetxController {
       if (response.isSuccess) {
         liveTrackingModel = LiveTrackingModel.fromJson(response.data);
 
-        driverName.value = liveTrackingModel?.data?.drivername ?? "";
+        managerNumber.value = liveTrackingModel?.assignedVehicle?.managerNumber.toString() ?? "";
+        driverName.value = liveTrackingModel?.assignedVehicle?.managerName ?? "";
         vehicleNumber.value = liveTrackingModel?.data?.vehicleno ?? "";
         temp.value = liveTrackingModel?.data?.temperature1.toString() ?? "";
         orderId.value = liveTrackingModel?.data?.vehicleid.toString() ?? "";
-
+        storeName.value = liveTrackingModel?.assignedVehicle?.storeName.toString()??"";
+        pdfUrl.value = liveTrackingModel?.assignedVehicle?.consignmentLink.toString()??"";
         final position = LatLng(
           liveTrackingModel?.data?.lat ?? 22.303,
           liveTrackingModel?.data?.lng ?? 77.2090,
@@ -80,36 +124,51 @@ class HomeController extends GetxController {
     required LatLng destination,
     required List<LatLng> waypoints,
   }) async {
-    final apiKey = "AIzaSyDqnDn4E0YCF3zaJuS9ez58XOcHhBtNVkc";
+    try {
+      final waypointParams = waypoints
+          .map((point) => "${point.latitude},${point.longitude}")
+          .join("|");
 
-    final waypointParams = waypoints
-        .map((point) => "${point.latitude},${point.longitude}")
-        .join("|");
+      final url = "https://maps.googleapis.com/maps/api/directions/json"
+          "?origin=${origin.latitude},${origin.longitude}"
+          "&destination=${destination.latitude},${destination.longitude}"
+          "${waypoints.isNotEmpty ? "&waypoints=$waypointParams" : ""}"
+          "&key=$apiKey";
 
-    final url = "https://maps.googleapis.com/maps/api/directions/json"
-        "?origin=${origin.latitude},${origin.longitude}"
-        "&destination=${destination.latitude},${destination.longitude}"
-        "&waypoints=$waypointParams"
-        "&key=$apiKey";
 
-    final response = await GetConnect().get(url);
-    if (response.statusCode == 200) {
-      final googlePolyLinesModel = GooglePolyLinesModel.fromJson(response.body);
-      final encoded = googlePolyLinesModel.routes?[0].overviewPolyline?.points;
+      final response = await GetConnect().get(url);
 
-      if (encoded == null || encoded.isEmpty) {
-        throw Exception("No polyline points found");
+      print("==>>> google url ==>>> $url");
+
+      if (response.statusCode == 200) {
+        final data = response.body;
+
+        if (data['routes'] == null || data['routes'].isEmpty) {
+          throw Exception("No routes found in response");
+        }
+
+        final encoded = data['routes'][0]['overview_polyline']?['points'];
+
+        if (encoded == null || encoded.isEmpty) {
+          throw Exception("No polyline points found");
+        }
+
+
+        final polylinePoints = PolylinePoints().decodePolyline(encoded);
+        return polylinePoints.map((e) => LatLng(e.latitude, e.longitude)).toList();
+      } else {
+        throw Exception("Failed to fetch directions: ${response.statusCode}");
       }
-
-      final polylinePoints = PolylinePoints().decodePolyline(encoded);
-      return polylinePoints.map((e) => LatLng(e.latitude, e.longitude)).toList();
-    } else {
-      throw Exception("Failed to fetch directions");
+    } catch (e) {
+      print("❌ Error in getRoutePoints: $e");
+      return []; // fallback to empty list
     }
   }
 
   Future<void> makePhoneCall() async {
-    final Uri _url = Uri(scheme: 'tel', path: '+918840064187');
+    final callingNumber = "+91${managerNumber.value}";
+
+    final Uri _url = Uri(scheme: 'tel', path: callingNumber);
     try {
       if (!await launchUrl(_url)) {
         throw Exception('Could not launch $_url');
@@ -133,10 +192,17 @@ class HomeController extends GetxController {
       assignedVehicle.endPoint?.longi ?? 0.0,
     );
 
+    print("==>>>startPoint.toString()  ${startPoint.toString()}  endPoint ${endPoint.toString()} ==>>");
+
     final List<LatLng> waypoints = assignedVehicle.checkPoint
         ?.map((cp) => LatLng(cp.lati ?? 0.0, cp.longi ?? 0.0))
-        .toList() ??
-        [];
+        .toList() ?? [];
+
+    for (int i = 0; i < assignedVehicle.checkPoint!.length; i++) {
+      print("Waypoint===???? ${i + 1}: Lat = ${assignedVehicle.checkPoint![i].lati}, Lng = ${assignedVehicle.checkPoint![i].longi}");
+    }
+
+
 
     List<LatLng> routePoints = await getRoutePoints(
       origin: startPoint,
@@ -145,12 +211,13 @@ class HomeController extends GetxController {
     );
 
     Set<Marker> routeMarkers = {};
-
+    final color = Color(0xFF177938);
+    final hsv = HSVColor.fromColor(color);
     routeMarkers.add(
       Marker(
         markerId: MarkerId("start"),
         position: startPoint,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        icon: startPointIcon,
         infoWindow: InfoWindow(title: "Start Point"),
       ),
     );
@@ -171,16 +238,17 @@ class HomeController extends GetxController {
       Marker(
         markerId: MarkerId("end"),
         position: endPoint,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        icon: checkPointsIcon,
         infoWindow: InfoWindow(title: "End Point"),
       ),
     );
+
 
     routeMarkers.add(
       Marker(
         markerId: MarkerId("vehicle"),
         position: vehiclePosition,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+        icon: vehicleIcon,
         infoWindow: InfoWindow(title: "Vehicle Location"),
       ),
     );
@@ -191,13 +259,17 @@ class HomeController extends GetxController {
       Polyline(
         polylineId: PolylineId("route"),
         points: routePoints,
-        color: Colors.blue,
+        color: ThemeHelper().appColor,
         width: 5,
       )
     };
 
     mapController?.animateCamera(
-      CameraUpdate.newLatLngZoom(startPoint, 14),
+      CameraUpdate.newLatLngZoom(vehiclePosition, 14),
     );
   }
+
+
+
+
 }

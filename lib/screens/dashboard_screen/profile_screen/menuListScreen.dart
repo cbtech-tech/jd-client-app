@@ -53,7 +53,6 @@ class MenuListScreen extends GetView<MenuListController>{
              ),
 
              Container(
-               height: Get.height*0.22,
                margin: EdgeInsets.only(top: 15),
                padding: EdgeInsets.all(10),
                decoration: BoxDecoration(
@@ -167,7 +166,6 @@ class MenuListScreen extends GetView<MenuListController>{
              ),
 
              Container(
-               height: Get.height*0.055,
                margin: EdgeInsets.only(top: 15),
                padding: EdgeInsets.all(10),
                decoration: BoxDecoration(
@@ -208,7 +206,6 @@ class MenuListScreen extends GetView<MenuListController>{
              ),
 
              Container(
-               height: Get.height*0.17,
                margin: EdgeInsets.only(top: 15),
                padding: EdgeInsets.all(10),
                decoration: BoxDecoration(
@@ -293,7 +290,6 @@ class MenuListScreen extends GetView<MenuListController>{
              ),
 
              Container(
-               height: Get.height*0.11,
                margin: EdgeInsets.only(top: 15),
                padding: EdgeInsets.all(10),
                decoration: BoxDecoration(
@@ -325,19 +321,22 @@ class MenuListScreen extends GetView<MenuListController>{
                    ),
 
                    SizedBox(height: 10,),
-                   Row(
-                     children: [
-                       Icon(Icons.logout_sharp),
-                       SizedBox(width: 10,),
+                   InkWell(
+                     onTap: ()=>controller.logout(),
+                     child: Row(
+                       children: [
+                         Icon(Icons.logout_sharp),
+                         SizedBox(width: 10,),
 
-                       Column(
-                         children: [
-                           Text("Logout".tr, style: CustomTextStyle.body(fontSize: 16,color: PrimaryColors().black900,)
-                           ),
+                         Column(
+                           children: [
+                             Text("Logout".tr, style: CustomTextStyle.body(fontSize: 16,color: PrimaryColors().black900,)
+                             ),
 
-                         ],)
+                           ],)
 
-                     ],
+                       ],
+                     ),
                    ),
 
 

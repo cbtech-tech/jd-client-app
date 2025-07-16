@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../routes/app_routes.dart';
+import '../../utils/pref_utils.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -9,8 +10,15 @@ class SplashScreen extends StatelessWidget {
   Future<void> checkUserExist() async {
 
     await Future.delayed(Duration(seconds: 3));
-    Get.offAllNamed(AppRoutes.loginScreen);
 
+    if(PrefUtils().getIsLoggedIn()&&(PrefUtils().getToken()!=null))
+      {
+        Get.offAllNamed(AppRoutes.dashboard);
+
+      }
+    else {
+      Get.offAllNamed(AppRoutes.loginScreen);
+    }
   }
 
   @override

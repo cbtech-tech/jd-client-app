@@ -1,51 +1,123 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'liveTrackingDataModel.g.dart';
-
+part 'historyDataModel.g.dart';
 
 @JsonSerializable()
-class LiveTrackingModel {
-  LiveTrackingModel({
+class HistoryDataModel {
+  HistoryDataModel({
     required this.status,
-    required this.message,
     required this.data,
-    required this.assignedVehicle,
   });
 
   final bool? status;
   static const String statusKey = "status";
 
-  final String? message;
-  static const String messageKey = "message";
-
-  final Data? data;
+  final List<Datum>? data;
   static const String dataKey = "data";
+
+
+  HistoryDataModel copyWith({
+    bool? status,
+    List<Datum>? data,
+  }) {
+    return HistoryDataModel(
+      status: status ?? this.status,
+      data: data ?? this.data,
+    );
+  }
+
+  factory HistoryDataModel.fromJson(Map<String, dynamic> json) => _$HistoryDataModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HistoryDataModelToJson(this);
+
+  @override
+  String toString(){
+    return "$status, $data, ";
+  }
+}
+
+@JsonSerializable()
+class Datum {
+  Datum({
+    required this.id,
+    required this.userId,
+    required this.assignedVehicle,
+    required this.liveDataArr,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+    required this.reportLink,
+    required this.feedback,
+    required this.feedbacks,
+  });
+
+  @JsonKey(name: '_id')
+  final String? id;
+  static const String idKey = "_id";
+
+  final UserId? userId;
+  static const String userIdKey = "userId";
 
   final AssignedVehicle? assignedVehicle;
   static const String assignedVehicleKey = "assignedVehicle";
 
+  final List<LiveDataArr>? liveDataArr;
+  static const String liveDataArrKey = "liveDataArr";
 
-  LiveTrackingModel copyWith({
-    bool? status,
-    String? message,
-    Data? data,
+  final DateTime? createdAt;
+  static const String createdAtKey = "createdAt";
+
+  final DateTime? updatedAt;
+  static const String updatedAtKey = "updatedAt";
+
+
+  @JsonKey(name: '__v')
+  final int? v;
+  static const String vKey = "__v";
+
+  final String? reportLink;
+  static const String reportLinkKey = "reportLink";
+
+  final bool? feedback;
+  static const String feedbackKey = "feedback";
+
+  final List<Feedback>? feedbacks;
+  static const String feedbacksKey = "feedbacks";
+
+
+  Datum copyWith({
+    String? id,
+    UserId? userId,
     AssignedVehicle? assignedVehicle,
+    List<LiveDataArr>? liveDataArr,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    int? v,
+    String? reportLink,
+    bool? feedback,
+    List<Feedback>? feedbacks,
   }) {
-    return LiveTrackingModel(
-      status: status ?? this.status,
-      message: message ?? this.message,
-      data: data ?? this.data,
+    return Datum(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
       assignedVehicle: assignedVehicle ?? this.assignedVehicle,
+      liveDataArr: liveDataArr ?? this.liveDataArr,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      v: v ?? this.v,
+      reportLink: reportLink ?? this.reportLink,
+      feedback: feedback ?? this.feedback,
+      feedbacks: feedbacks ?? this.feedbacks,
     );
   }
 
-  factory LiveTrackingModel.fromJson(Map<String, dynamic> json) => _$LiveTrackingModelFromJson(json);
+  factory Datum.fromJson(Map<String, dynamic> json) => _$DatumFromJson(json);
 
-  Map<String, dynamic> toJson() => _$LiveTrackingModelToJson(this);
+  Map<String, dynamic> toJson() => _$DatumToJson(this);
 
   @override
   String toString(){
-    return "$status, $message, $data, $assignedVehicle, ";
+    return "$id, $userId, $assignedVehicle, $liveDataArr, $createdAt, $updatedAt, $v, $reportLink, $feedback, $feedbacks, ";
   }
 }
 
@@ -57,8 +129,6 @@ class AssignedVehicle {
     required this.id,
     required this.phoneNumber,
     required this.vehicleNumber,
-    required this.startPointName,
-    required this.endPointName,
     required this.checkPoint,
     required this.deliveryStatus,
     required this.deliveryCompleted,
@@ -67,16 +137,11 @@ class AssignedVehicle {
     required this.radius,
     required this.delayStatus,
     required this.delayTime,
-    required this.natureofGoods,
-    required this.companyName,
-    required this.consignorName,
-    required this.managerName,
-    required this.managerNumber,
-    required this.storeName,
     required this.createdAt,
     required this.updatedAt,
     required this.v,
     required this.consignmentLink,
+    required this.storeName,
   });
 
   final Point? startPoint;
@@ -96,12 +161,6 @@ class AssignedVehicle {
   final String? vehicleNumber;
   static const String vehicleNumberKey = "vehicleNumber";
 
-  final String? startPointName;
-  static const String startPointNameKey = "startPointName";
-
-  final String? endPointName;
-  static const String endPointNameKey = "endPointName";
-
   final List<CheckPoint>? checkPoint;
   static const String checkPointKey = "checkPoint";
 
@@ -117,7 +176,7 @@ class AssignedVehicle {
   final String? timerStartTime;
   static const String timerStartTimeKey = "timerStartTime";
 
-  final int? radius;
+  final double? radius;
   static const String radiusKey = "radius";
 
   final bool? delayStatus;
@@ -125,24 +184,6 @@ class AssignedVehicle {
 
   final int? delayTime;
   static const String delayTimeKey = "delayTime";
-
-  final String? natureofGoods;
-  static const String natureofGoodsKey = "natureofGoods";
-
-  final String? companyName;
-  static const String companyNameKey = "companyName";
-
-  final String? consignorName;
-  static const String consignorNameKey = "consignorName";
-
-  final String? managerName;
-  static const String managerNameKey = "managerName";
-
-  final int? managerNumber;
-  static const String managerNumberKey = "managerNumber";
-
-  final String? storeName;
-  static const String storeNameKey = "storeName";
 
   final DateTime? createdAt;
   static const String createdAtKey = "createdAt";
@@ -158,6 +199,9 @@ class AssignedVehicle {
   final String? consignmentLink;
   static const String consignmentLinkKey = "consignmentLink";
 
+  final String? storeName;
+  static const String storeNameKey = "storeName";
+
 
   AssignedVehicle copyWith({
     Point? startPoint,
@@ -165,26 +209,19 @@ class AssignedVehicle {
     String? id,
     String? phoneNumber,
     String? vehicleNumber,
-    String? startPointName,
-    String? endPointName,
     List<CheckPoint>? checkPoint,
     String? deliveryStatus,
     bool? deliveryCompleted,
     bool? vehicleInStore,
     String? timerStartTime,
-    int? radius,
+    double? radius,
     bool? delayStatus,
     int? delayTime,
-    String? natureofGoods,
-    String? companyName,
-    String? consignorName,
-    String? managerName,
-    int? managerNumber,
-    String? storeName,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? v,
     String? consignmentLink,
+    String? storeName,
   }) {
     return AssignedVehicle(
       startPoint: startPoint ?? this.startPoint,
@@ -192,8 +229,6 @@ class AssignedVehicle {
       id: id ?? this.id,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       vehicleNumber: vehicleNumber ?? this.vehicleNumber,
-      startPointName: startPointName ?? this.startPointName,
-      endPointName: endPointName ?? this.endPointName,
       checkPoint: checkPoint ?? this.checkPoint,
       deliveryStatus: deliveryStatus ?? this.deliveryStatus,
       deliveryCompleted: deliveryCompleted ?? this.deliveryCompleted,
@@ -202,16 +237,11 @@ class AssignedVehicle {
       radius: radius ?? this.radius,
       delayStatus: delayStatus ?? this.delayStatus,
       delayTime: delayTime ?? this.delayTime,
-      natureofGoods: natureofGoods ?? this.natureofGoods,
-      companyName: companyName ?? this.companyName,
-      consignorName: consignorName ?? this.consignorName,
-      managerName: managerName ?? this.managerName,
-      managerNumber: managerNumber ?? this.managerNumber,
-      storeName: storeName ?? this.storeName,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       v: v ?? this.v,
       consignmentLink: consignmentLink ?? this.consignmentLink,
+      storeName: storeName ?? this.storeName,
     );
   }
 
@@ -221,7 +251,7 @@ class AssignedVehicle {
 
   @override
   String toString(){
-    return "$startPoint, $endPoint, $id, $phoneNumber, $vehicleNumber, $startPointName, $endPointName, $checkPoint, $deliveryStatus, $deliveryCompleted, $vehicleInStore, $timerStartTime, $radius, $delayStatus, $delayTime, $natureofGoods, $companyName, $consignorName, $managerName, $managerNumber, $storeName, $createdAt, $updatedAt, $v, $consignmentLink, ";
+    return "$startPoint, $endPoint, $id, $phoneNumber, $vehicleNumber, $checkPoint, $deliveryStatus, $deliveryCompleted, $vehicleInStore, $timerStartTime, $radius, $delayStatus, $delayTime, $createdAt, $updatedAt, $v, $consignmentLink, $storeName, ";
   }
 }
 
@@ -314,8 +344,69 @@ class Point {
 }
 
 @JsonSerializable()
-class Data {
-  Data({
+class Feedback {
+  Feedback({
+    required this.id,
+    required this.userHistoryId,
+    required this.rating,
+    required this.ratingComment,
+    required this.createdAt,
+    required this.v,
+  });
+
+  @JsonKey(name: '_id')
+  final String? id;
+  static const String idKey = "_id";
+
+  final String? userHistoryId;
+  static const String userHistoryIdKey = "userHistoryId";
+
+  final int? rating;
+  static const String ratingKey = "rating";
+
+  final List<String>? ratingComment;
+  static const String ratingCommentKey = "ratingComment";
+
+  final DateTime? createdAt;
+  static const String createdAtKey = "createdAt";
+
+
+  @JsonKey(name: '__v')
+  final int? v;
+  static const String vKey = "__v";
+
+
+  Feedback copyWith({
+    String? id,
+    String? userHistoryId,
+    int? rating,
+    List<String>? ratingComment,
+    DateTime? createdAt,
+    int? v,
+  }) {
+    return Feedback(
+      id: id ?? this.id,
+      userHistoryId: userHistoryId ?? this.userHistoryId,
+      rating: rating ?? this.rating,
+      ratingComment: ratingComment ?? this.ratingComment,
+      createdAt: createdAt ?? this.createdAt,
+      v: v ?? this.v,
+    );
+  }
+
+  factory Feedback.fromJson(Map<String, dynamic> json) => _$FeedbackFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FeedbackToJson(this);
+
+  @override
+  String toString(){
+    return "$id, $userHistoryId, $rating, $ratingComment, $createdAt, $v, ";
+  }
+}
+
+@JsonSerializable()
+class LiveDataArr {
+  LiveDataArr({
     required this.vehicleno,
     required this.vehicleid,
     required this.kind,
@@ -461,7 +552,7 @@ class Data {
   static const String shorturlKey = "shorturl";
 
 
-  Data copyWith({
+  LiveDataArr copyWith({
     String? vehicleno,
     int? vehicleid,
     String? kind,
@@ -498,7 +589,7 @@ class Data {
     String? deviceTrackingState,
     String? shorturl,
   }) {
-    return Data(
+    return LiveDataArr(
       vehicleno: vehicleno ?? this.vehicleno,
       vehicleid: vehicleid ?? this.vehicleid,
       kind: kind ?? this.kind,
@@ -537,12 +628,91 @@ class Data {
     );
   }
 
-  factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
+  factory LiveDataArr.fromJson(Map<String, dynamic> json) => _$LiveDataArrFromJson(json);
 
-  Map<String, dynamic> toJson() => _$DataToJson(this);
+  Map<String, dynamic> toJson() => _$LiveDataArrToJson(this);
 
   @override
   String toString(){
     return "$vehicleno, $vehicleid, $kind, $unitno, $groupname, $vehiclestatus, $lat, $lng, $location, $lastupdated, $vehiclespeed, $odometer, $distance, $digitalstatus, $temperature1, $temperature2, $temperature3, $temperature4, $drivername, $ignition, $timestamp, $utctimestamp, $systemtime, $utcsystemtime, $vehiclestatusNew, $doorSensor1, $doorSensor2, $idleSince, $direction, $deviceId, $locationName, $type, $vehicleMotionStatus, $deviceTrackingState, $shorturl, ";
+  }
+}
+
+@JsonSerializable()
+class UserId {
+  UserId({
+    required this.id,
+    required this.mobileNumber,
+    required this.role,
+    required this.isActive,
+    required this.onboardingStatus,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+    required this.lastLogin,
+  });
+
+  @JsonKey(name: '_id')
+  final String? id;
+  static const String idKey = "_id";
+
+  final String? mobileNumber;
+  static const String mobileNumberKey = "mobileNumber";
+
+  final String? role;
+  static const String roleKey = "role";
+
+  final bool? isActive;
+  static const String isActiveKey = "isActive";
+
+  final String? onboardingStatus;
+  static const String onboardingStatusKey = "onboardingStatus";
+
+  final DateTime? createdAt;
+  static const String createdAtKey = "createdAt";
+
+  final DateTime? updatedAt;
+  static const String updatedAtKey = "updatedAt";
+
+
+  @JsonKey(name: '__v')
+  final int? v;
+  static const String vKey = "__v";
+
+  final DateTime? lastLogin;
+  static const String lastLoginKey = "lastLogin";
+
+
+  UserId copyWith({
+    String? id,
+    String? mobileNumber,
+    String? role,
+    bool? isActive,
+    String? onboardingStatus,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    int? v,
+    DateTime? lastLogin,
+  }) {
+    return UserId(
+      id: id ?? this.id,
+      mobileNumber: mobileNumber ?? this.mobileNumber,
+      role: role ?? this.role,
+      isActive: isActive ?? this.isActive,
+      onboardingStatus: onboardingStatus ?? this.onboardingStatus,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      v: v ?? this.v,
+      lastLogin: lastLogin ?? this.lastLogin,
+    );
+  }
+
+  factory UserId.fromJson(Map<String, dynamic> json) => _$UserIdFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserIdToJson(this);
+
+  @override
+  String toString(){
+    return "$id, $mobileNumber, $role, $isActive, $onboardingStatus, $createdAt, $updatedAt, $v, $lastLogin, ";
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 
 import 'package:pinput/pinput.dart';
@@ -41,154 +40,177 @@ class OtpScreen extends GetView<LoginController> {
       Padding(
           padding: const EdgeInsets.all(16.0),
 
-          child:  Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
+          child:  SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
 
-            children: [
+              children: [
 
-              SizedBox(height: mediaQuery.height*0.01,),
+                SizedBox(height: mediaQuery.height*0.01,),
 
-              InkWell(
-                  onTap: ()=> Get.back(),
-                  child:Icon(Icons.arrow_back)),
+                InkWell(
+                    onTap: ()=> Get.back(),
+                    child:Icon(Icons.arrow_back)),
 
-              SizedBox(height: mediaQuery.height*0.01,),
+                SizedBox(height: mediaQuery.height*0.01,),
 
-              Text("enter_otp".tr,style: CustomTextStyle.heading(),),
+                Text("enter_otp".tr,style: CustomTextStyle.heading(),),
 
-              SizedBox(height: mediaQuery.height*0.01,),
+                SizedBox(height: mediaQuery.height*0.01,),
 
-              Text("We send code to ${controller.phoneController.text} ".tr,style: CustomTextStyle.body(color: PrimaryColors().gray80005),),
-
-
-              SizedBox(height: mediaQuery.height*0.1,),
+                Text("We send code to ${controller.phoneController.text} ".tr,style: CustomTextStyle.body(color: PrimaryColors().gray80005),),
 
 
+                SizedBox(height: mediaQuery.height*0.1,),
 
 
-              Center (child:
-              Pinput(
-                // You can pass your own SmsRetriever implementation based on any package
-                // in this example we are using the SmartAuth
-                // smsRetriever: smsRetriever,
-                controller:controller.pinController,
-                focusNode:controller.focusNode,
-                defaultPinTheme: defaultPinTheme,
-                length: 6,
-                separatorBuilder: (index) => const SizedBox(width: 8),
+                Center (child:
 
-                hapticFeedbackType: HapticFeedbackType.lightImpact,
-                onCompleted: (pin) {
-                  debugPrint('onCompleted: $pin');
+                Pinput(
+                  // You can pass your own SmsRetriever implementation based on any package
+                  // in this example we are using the SmartAuth
+                  // smsRetriever: smsRetriever,
+                  controller:controller.pinController,
+                  focusNode:controller.focusNode,
+                  defaultPinTheme: defaultPinTheme,
+                  length: 6,
+                  separatorBuilder: (index) => const SizedBox(width: 8),
 
-                  controller.verifyOtp();
+                  hapticFeedbackType: HapticFeedbackType.lightImpact,
+                  onCompleted: (pin) {
+                    debugPrint('onCompleted: $pin');
 
-                },
-                onChanged: (value) {
-                  debugPrint('onChanged: $value');
-                },
-                cursor: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 9),
-                      width: 22,
-                      height: 1,
-                      color: focusedBorderColor,
-                    ),
-                  ],
-                ),
-                focusedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: focusedBorderColor),
-                  ),
-                ),
-                submittedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-                    color: fillColor,
-                    borderRadius: BorderRadius.circular(19),
-                    border: Border.all(color: focusedBorderColor),
-                  ),
-                ),
-                errorPinTheme: defaultPinTheme.copyBorderWith(
-                  border: Border.all(color: Colors.redAccent),
-                ),
-              ),
-              ),
+                    controller.verifyOtp();
 
-              SizedBox(height: mediaQuery.height*0.02,),
-
-              SizedBox(height: mediaQuery.height*0.02,),
-
-
-              Center(child: Text("resend".tr,style: CustomTextStyle.subHeading(fontSize: 14,color: Colors.grey),)),
-
-              SizedBox(height: mediaQuery.height*0.02,),
-
-
-              Center(
-                child: Container(
-                  height: 50,
-                  width: Get.width*0.45,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color:  PrimaryColors().gray100
-                  ),
-                  child:
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                    
-                    Icon(Icons.phone_outlined,color: Colors.black,),
-                    Text("Get OTP via Call", style: CustomTextStyle.body(fontSize: 14,color: Colors.black),)
-
-
-
-                  ],),
-                ),
-              ),
-
-              SizedBox(height: mediaQuery.height*0.02,),
-
-              Center(
-                child: Container(
-                  height: 50,
-                  width: Get.width*0.45,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color:  PrimaryColors().gray100
-                  ),
-                  child:
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-
-                      Icon(Icons.message_outlined,color: Colors.black,),
-                      Text("Resend OTP via SMS", style: CustomTextStyle.body(fontSize: 14,color: Colors.black),)
-
-
-
-                    ],),
-                ),
-              ),
-
-              Spacer(),
-
-              Padding(
-                  padding: EdgeInsets.only(left: 20,right: 20,bottom: 20),
-                  child:  CustomButton(text: "continue".tr,onTap:() async {
-                    await controller.verifyOtp();
                   },
+                  onChanged: (value) {
+                    debugPrint('onChanged: $value');
+                  },
+                  cursor: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 9),
+                        width: 22,
+                        height: 1,
+                        color: focusedBorderColor,
+                      ),
+                    ],
+                  ),
+                  focusedPinTheme: defaultPinTheme.copyWith(
+                    decoration: defaultPinTheme.decoration!.copyWith(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: focusedBorderColor),
+                    ),
+                  ),
+                  submittedPinTheme: defaultPinTheme.copyWith(
+                    decoration: defaultPinTheme.decoration!.copyWith(
+                      color: fillColor,
+                      borderRadius: BorderRadius.circular(19),
+                      border: Border.all(color: focusedBorderColor),
+                    ),
+                  ),
+                  errorPinTheme: defaultPinTheme.copyBorderWith(
+                    border: Border.all(color: Colors.redAccent),
+                  ),
+                ),
+                ),
 
-                  )),
+                SizedBox(height: mediaQuery.height*0.02,),
+
+                SizedBox(height: mediaQuery.height*0.02,),
+
+
+                Obx(
+                    ()=> Visibility(
+                      visible:!controller.showResendOtp.value ,
+                      child: Center(child: Obx(()=> Text("Resend OTP in ${controller.secondsRemaining.value.toString()} seconds",style: CustomTextStyle.subHeading(fontSize: 14,color: Colors.grey),)))),
+                ),
+
+
+                SizedBox(height: mediaQuery.height*0.02,),
+
+
+                Visibility(
+                  visible: false,
+                  child: Center(
+                    child: InkWell(
+                      onTap: ()=>controller.loginFun(true),
+
+                      child: Container(
+                        height: 50,
+                        width: Get.width*0.45,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color:  PrimaryColors().gray100
+                        ),
+                        child:
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+
+                            Icon(Icons.phone_outlined,color: Colors.black,),
+                            Text("Get OTP via Call", style: CustomTextStyle.body(fontSize: 14,color: Colors.black),)
 
 
 
-            ],)
+                          ],),
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: mediaQuery.height*0.02,),
+
+                Obx(
+                  ()=> Visibility(visible: controller.showResendOtp.value,
+
+                    child: Center(
+                      child: InkWell(
+                        onTap: ()=>controller.loginFun(true),
+
+                        child: Container(
+                          height: 50,
+                          width: Get.width*0.45,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              color:  PrimaryColors().gray100
+                          ),
+                          child:
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+
+                              Icon(Icons.message_outlined,color: Colors.black,),
+                              Text("Resend OTP via SMS", style: CustomTextStyle.body(fontSize: 14,color: Colors.black),)
+
+
+
+                            ],),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+
+                SizedBox(height: Get.height*0.25,),
+
+                Padding(
+                    padding: EdgeInsets.only(left: 20,right: 20,bottom: 20),
+                    child:  CustomButton(text: "continue".tr,onTap:() async {
+                      await controller.verifyOtp();
+                    },
+
+                    )),
+
+
+
+              ],),
+          )
       )
       ),
     );

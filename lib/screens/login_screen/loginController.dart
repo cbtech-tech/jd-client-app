@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -30,6 +31,10 @@ class LoginController extends GetxController with GetSingleTickerProviderStateMi
   final ApiService apiService = Get.find();
 
   var newUser = false.obs;
+  RxInt secondsRemaining = 60.obs;
+  Timer? _timer;
+  RxBool showResendOtp = false.obs;
+
 
   @override
   void onInit() {
@@ -43,7 +48,7 @@ class LoginController extends GetxController with GetSingleTickerProviderStateMi
 
   }
 
-  Future<void> loginFun() async {
+  Future<void> loginFun(bool resendOtp) async {
 
     if(phoneController.text.isEmpty){
 
@@ -54,7 +59,6 @@ class LoginController extends GetxController with GetSingleTickerProviderStateMi
     LoaderUtil.showLoader();
     final body = {
       "mobileNumber": "+91${phoneController.text.toString()}",
-
     };
 
     final response = await apiService.postRequest(ApiConstants().login, body);
@@ -65,11 +69,16 @@ class LoginController extends GetxController with GetSingleTickerProviderStateMi
 
       if(loginModel.success??false)
       {
-        print("==>>");
         SnackbarUtil.showSuccessBottom("OTP send Successfully");
+        startTimer();
         LoaderUtil.hideLoader();
 
-        Get.to(()=>OtpScreen());
+      if(!resendOtp)
+        {
+          Get.to(()=>OtpScreen());
+        }
+
+
 
       }
       else {
@@ -122,9 +131,17 @@ class LoginController extends GetxController with GetSingleTickerProviderStateMi
         Future.delayed(Duration(milliseconds: 100), () {
           SnackbarUtil.showSuccessBottom("OTP verified Successfully");
 
+          Get.offAllNamed(AppRoutes.dashboard);
+
+          /*
           if (loginModel.user?.onboardingStatus?.contains("not_started") ?? false) {
             Get.to(OnboardingScreens(), binding: OnboardingBinding());
           }
+          else{
+            Get.offAllNamed(AppRoutes.dashboard);
+          }*/
+          
+
         });
       } else {
         LoaderUtil.hideLoader();
@@ -142,5 +159,28 @@ class LoginController extends GetxController with GetSingleTickerProviderStateMi
         SnackbarUtil.showErrorTop(loginModel.message);
       });
     }
+  }
+
+  void startTimer({int from = 60}) {
+    secondsRemaining.value = from;
+    showResendOtp.value = false;
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (secondsRemaining.value == 0) {
+        timer.cancel();
+        showResendOtp.value = true; // 👈 Set to true when countdown ends
+      } else {
+        secondsRemaining.value--;
+      }
+    });
+  }
+
+  void resetTimer() {
+    startTimer(from: 60);
+  }
+  @override
+  void onClose() {
+    _timer?.cancel();
+    super.onClose();
   }
 }

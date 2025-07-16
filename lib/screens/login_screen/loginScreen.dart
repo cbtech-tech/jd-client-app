@@ -26,63 +26,65 @@ class LoginScreen extends GetView<LoginController> {
           child: Obx(
                 () => Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: mediaQuery.height * 0.03),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: mediaQuery.height * 0.03),
 
-                      SizedBox(
-                        width: 200,
-                        child: Text("enter_phone".tr, style: CustomTextStyle.heading()),
-                      ),
-
-                      SizedBox(height: mediaQuery.height * 0.01),
-
-                      Text(
-                        "sign_in_to_access_your_account".tr,
-                        style: CustomTextStyle.body(color: PrimaryColors().gray80005),
-                      ),
-
-
-
-                      controller.firstScreen.value
-                          ? Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: PrimaryColors().gray60003,
-                          borderRadius: BorderRadius.circular(15.0),
+                        SizedBox(
+                          width: 200,
+                          child: Text("enter_phone".tr, style: CustomTextStyle.heading()),
                         ),
-                        child: TabBar(
-                          controller: controller.tabController,
-                          unselectedLabelColor: Colors.grey,
-                          indicatorColor: Colors.transparent,
-                          dividerColor: Colors.transparent,
-                          indicator: BoxDecoration(
-                            color: Colors.white,
+
+                        SizedBox(height: mediaQuery.height * 0.01),
+
+                        Text(
+                          "sign_in_to_access_your_account".tr,
+                          style: CustomTextStyle.body(color: PrimaryColors().gray80005),
+                        ),
+
+
+
+                        controller.firstScreen.value
+                            ? Container(
+                          margin: const EdgeInsets.only(top: 20),
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: PrimaryColors().gray60003,
                             borderRadius: BorderRadius.circular(15.0),
                           ),
-                          labelColor: Colors.black,
-                          tabs: const [
-                            Tab(child: Center(child: Text("Log In"))),
-                            Tab(child: Center(child: Text("Sign Up"))),
-                          ],
-                        ),
-                      )
-                          : const SizedBox(),
+                          child: TabBar(
+                            controller: controller.tabController,
+                            unselectedLabelColor: Colors.grey,
+                            indicatorColor: Colors.transparent,
+                            dividerColor: Colors.transparent,
+                            indicator: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            labelColor: Colors.black,
+                            tabs: const [
+                              Tab(child: Center(child: Text("Log In"))),
+                              Tab(child: Center(child: Text("Sign Up"))),
+                            ],
+                          ),
+                        )
+                            : const SizedBox(),
 
-                      // FIX: Replace Expanded with SizedBox with fixed height
-                      SizedBox(
-                        height: Get.height*0.66,
-                        child: TabBarView(
-                          controller: controller.tabController,
-                          children: [
-                            _signInFormBuild(context, mediaQuery),
-                            _signInFormBuild(context, mediaQuery),
-                          ],
+                        // FIX: Replace Expanded with SizedBox with fixed height
+                        SizedBox(
+                          height: Get.height*0.66,
+                          child: TabBarView(
+                            controller: controller.tabController,
+                            children: [
+                              _signInFormBuild(context, mediaQuery),
+                              _signInFormBuild(context, mediaQuery),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
           ),
@@ -137,7 +139,7 @@ class LoginScreen extends GetView<LoginController> {
             padding: const EdgeInsets.only(left: 0, right: 0, bottom: 20),
             child: CustomButton(
               text: "sign_in".tr,
-              onTap:()=>  controller.loginFun()  //Get.to(HomeBottomScreen(),binding: BottomBindings(),)    //controller.loginFun(),
+              onTap:()=>  controller.loginFun(false)  //Get.to(HomeBottomScreen(),binding: BottomBindings(),)    //controller.loginFun(),
             ),
           ),
 

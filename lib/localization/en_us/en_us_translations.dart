@@ -1,6 +1,6 @@
 final Map<String, String> enUs = {
   // Welcome Screen
-  "app_name":"Just Deliveries",
+  "app_name":"JustDeliveries",
   "basic_details":"Basic Details",
   "legal_document":"Legal Document",
   "bank_details":"Bank Details",
@@ -43,7 +43,7 @@ final Map<String, String> enUs = {
   "havent_received_otp":"Haven't received the code yet?",
   "continue":"Continue",
   "wrong_code":"Wrong code",
-  "resend":" Resend (59 seconds)",
+  "resend":" Resend",
   "registered_successfully":"Registered Successfully",
   "phone_registered_successfully":"Your phone number has been successfully registered",
   "dashboard":"Dashboard",

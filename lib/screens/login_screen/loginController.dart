@@ -140,7 +140,12 @@ class LoginController extends GetxController with GetSingleTickerProviderStateMi
           else{
             Get.offAllNamed(AppRoutes.dashboard);
           }*/
-          
+
+
+
+
+
+
 
         });
       } else {

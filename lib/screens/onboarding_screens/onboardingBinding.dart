@@ -4,7 +4,6 @@ import 'package:just_delivery/screens/onboarding_screens/onboarding_controller.d
 class OnboardingBinding extends Bindings{
   @override
   void dependencies() {
-    // TODO: implement dependencies
     Get.lazyPut(()=>OnboardingController());
   }
 

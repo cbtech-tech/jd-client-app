@@ -1,5 +1,8 @@
+import 'dart:developer';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:just_delivery/routes/app_routes.dart';
 import 'localization/app_localization.dart';
@@ -8,18 +11,20 @@ import 'utils/inital_binding.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   _deviceInfo();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 Future<void> _deviceInfo() async {
   final deviceInfoPlugin = DeviceInfoPlugin();
   final info = await deviceInfoPlugin.androidInfo;
-  print("Device Model: ${info.model}");
-
+  log("Device Model: ${info.model}");
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -27,19 +32,24 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: theme,
-      color: Colors.white,
-      translations: AppLocalization(),
-      locale: Get.deviceLocale,
-      //for setting localization strings
-      fallbackLocale: Locale('en', 'US'),
-      title: 'app_name'.tr,
-      initialBinding: InitialBindings(),
-      initialRoute: AppRoutes.initialRoute,
-      getPages: AppRoutes.pages,
-      smartManagement: SmartManagement.full,
+    return ScreenUtilInit(
+      designSize: Size(395, 839),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: theme,
+        color: Colors.white,
+        translations: AppLocalization(),
+        locale: Get.deviceLocale,
+        //for setting localization strings
+        fallbackLocale: Locale('en', 'US'),
+        title: 'app_name'.tr,
+        initialBinding: InitialBindings(),
+        initialRoute: AppRoutes.initialRoute,
+        getPages: AppRoutes.pages,
+        smartManagement: SmartManagement.full,
+      ),
     );
   }
 }

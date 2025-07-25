@@ -49,6 +49,10 @@ Datum _$DatumFromJson(Map<String, dynamic> json) => Datum(
       (json['feedbacks'] as List<dynamic>?)
           ?.map((e) => Feedback.fromJson(e as Map<String, dynamic>))
           .toList(),
+  checkpoints:
+      (json['checkpoints'] as List<dynamic>?)
+          ?.map((e) => CheckpointsModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
 );
 
 Map<String, dynamic> _$DatumToJson(Datum instance) => <String, dynamic>{
@@ -58,6 +62,7 @@ Map<String, dynamic> _$DatumToJson(Datum instance) => <String, dynamic>{
   'liveDataArr': instance.liveDataArr,
   'createdAt': instance.createdAt?.toIso8601String(),
   'updatedAt': instance.updatedAt?.toIso8601String(),
+  'checkpoints': instance.checkpoints,
   '__v': instance.v,
   'reportLink': instance.reportLink,
   'feedback': instance.feedback,
@@ -261,6 +266,38 @@ Map<String, dynamic> _$LiveDataArrToJson(LiveDataArr instance) =>
       'vehicleMotionStatus': instance.vehicleMotionStatus,
       'deviceTrackingState': instance.deviceTrackingState,
       'shorturl': instance.shorturl,
+    };
+
+CheckpointsModel _$CheckpointsModelFromJson(Map<String, dynamic> json) =>
+    CheckpointsModel(
+      checkpointName: json['checkpointName'] as String?,
+      checkpointLat: (json['checkpointLat'] as num?)?.toDouble(),
+      checkpointLng: (json['checkpointLng'] as num?)?.toDouble(),
+      inTime:
+          json['inTime'] == null
+              ? null
+              : DateTime.parse(json['inTime'] as String),
+      inTemp: json['inTemp'] as String?,
+      id: json['_id'] as String?,
+      outTemp: json['outTemp'] as String?,
+      outTime:
+          json['outTime'] == null
+              ? null
+              : DateTime.parse(json['outTime'] as String),
+      timeSpent: (json['timeSpent'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$CheckpointsModelToJson(CheckpointsModel instance) =>
+    <String, dynamic>{
+      'checkpointName': instance.checkpointName,
+      'checkpointLat': instance.checkpointLat,
+      'checkpointLng': instance.checkpointLng,
+      'inTime': instance.inTime?.toIso8601String(),
+      'inTemp': instance.inTemp,
+      '_id': instance.id,
+      'outTemp': instance.outTemp,
+      'outTime': instance.outTime?.toIso8601String(),
+      'timeSpent': instance.timeSpent,
     };
 
 UserId _$UserIdFromJson(Map<String, dynamic> json) => UserId(

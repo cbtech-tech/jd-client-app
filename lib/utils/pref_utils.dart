@@ -13,6 +13,7 @@ class PrefUtils {
     });
   }
 
+
   Future<void> init() async {
     _sharedPreferences ??= await SharedPreferences.getInstance();
     print('SharedPreferences Initialized');
@@ -37,6 +38,11 @@ class PrefUtils {
   // USERNAME
   Future<void> setUsername(String value) => _sharedPreferences!.setString('username', value);
   String? getUsername() => _sharedPreferences!.getString('username');
+
+   // USERTYPE
+  Future<void> setUsertype(String value) => _sharedPreferences!.setString('usertype', value);
+  String? getUsertype() => _sharedPreferences!.getString('usertype');
+
 
   // -------------------------
   // EMAIL

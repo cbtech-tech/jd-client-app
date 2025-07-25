@@ -10,6 +10,9 @@ class ApiConstants {
 
   final liveTrackingApi = "/elixia/vehicle-data";
 
+  final getTodayData = "/hq/assigned-vehicles";
+  final hqLiveVahical = "/hq/assigned-vehicles";
+
   final userHistory ="/history/user-history";
   final feedback ="/user-feedback";
 

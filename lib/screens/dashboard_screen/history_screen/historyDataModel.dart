@@ -4,10 +4,7 @@ part 'historyDataModel.g.dart';
 
 @JsonSerializable()
 class HistoryDataModel {
-  HistoryDataModel({
-    required this.status,
-    required this.data,
-  });
+  HistoryDataModel({required this.status, required this.data});
 
   final bool? status;
   static const String statusKey = "status";
@@ -15,23 +12,20 @@ class HistoryDataModel {
   final List<Datum>? data;
   static const String dataKey = "data";
 
-
-  HistoryDataModel copyWith({
-    bool? status,
-    List<Datum>? data,
-  }) {
+  HistoryDataModel copyWith({bool? status, List<Datum>? data}) {
     return HistoryDataModel(
       status: status ?? this.status,
       data: data ?? this.data,
     );
   }
 
-  factory HistoryDataModel.fromJson(Map<String, dynamic> json) => _$HistoryDataModelFromJson(json);
+  factory HistoryDataModel.fromJson(Map<String, dynamic> json) =>
+      _$HistoryDataModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$HistoryDataModelToJson(this);
 
   @override
-  String toString(){
+  String toString() {
     return "$status, $data, ";
   }
 }
@@ -49,6 +43,7 @@ class Datum {
     required this.reportLink,
     required this.feedback,
     required this.feedbacks,
+    required this.checkpoints,
   });
 
   @JsonKey(name: '_id')
@@ -69,7 +64,8 @@ class Datum {
 
   final DateTime? updatedAt;
   static const String updatedAtKey = "updatedAt";
-
+  final List<CheckpointsModel>? checkpoints;
+  static const String checkpointsKey = "checkpoints";
 
   @JsonKey(name: '__v')
   final int? v;
@@ -84,7 +80,6 @@ class Datum {
   final List<Feedback>? feedbacks;
   static const String feedbacksKey = "feedbacks";
 
-
   Datum copyWith({
     String? id,
     UserId? userId,
@@ -96,6 +91,8 @@ class Datum {
     String? reportLink,
     bool? feedback,
     List<Feedback>? feedbacks,
+     List<CheckpointsModel>? checkpoints,
+    
   }) {
     return Datum(
       id: id ?? this.id,
@@ -108,6 +105,7 @@ class Datum {
       reportLink: reportLink ?? this.reportLink,
       feedback: feedback ?? this.feedback,
       feedbacks: feedbacks ?? this.feedbacks,
+      checkpoints: checkpoints ?? this.checkpoints,
     );
   }
 
@@ -116,7 +114,7 @@ class Datum {
   Map<String, dynamic> toJson() => _$DatumToJson(this);
 
   @override
-  String toString(){
+  String toString() {
     return "$id, $userId, $assignedVehicle, $liveDataArr, $createdAt, $updatedAt, $v, $reportLink, $feedback, $feedbacks, ";
   }
 }
@@ -149,7 +147,6 @@ class AssignedVehicle {
 
   final Point? endPoint;
   static const String endPointKey = "endPoint";
-
 
   @JsonKey(name: '_id')
   final String? id;
@@ -191,7 +188,6 @@ class AssignedVehicle {
   final DateTime? updatedAt;
   static const String updatedAtKey = "updatedAt";
 
-
   @JsonKey(name: '__v')
   final int? v;
   static const String vKey = "__v";
@@ -201,7 +197,6 @@ class AssignedVehicle {
 
   final String? storeName;
   static const String storeNameKey = "storeName";
-
 
   AssignedVehicle copyWith({
     Point? startPoint,
@@ -245,12 +240,13 @@ class AssignedVehicle {
     );
   }
 
-  factory AssignedVehicle.fromJson(Map<String, dynamic> json) => _$AssignedVehicleFromJson(json);
+  factory AssignedVehicle.fromJson(Map<String, dynamic> json) =>
+      _$AssignedVehicleFromJson(json);
 
   Map<String, dynamic> toJson() => _$AssignedVehicleToJson(this);
 
   @override
-  String toString(){
+  String toString() {
     return "$startPoint, $endPoint, $id, $phoneNumber, $vehicleNumber, $checkPoint, $deliveryStatus, $deliveryCompleted, $vehicleInStore, $timerStartTime, $radius, $delayStatus, $delayTime, $createdAt, $updatedAt, $v, $consignmentLink, $storeName, ";
   }
 }
@@ -277,11 +273,9 @@ class CheckPoint {
   final bool? completed;
   static const String completedKey = "completed";
 
-
   @JsonKey(name: '_id')
   final String? id;
   static const String idKey = "_id";
-
 
   CheckPoint copyWith({
     double? lati,
@@ -299,22 +293,20 @@ class CheckPoint {
     );
   }
 
-  factory CheckPoint.fromJson(Map<String, dynamic> json) => _$CheckPointFromJson(json);
+  factory CheckPoint.fromJson(Map<String, dynamic> json) =>
+      _$CheckPointFromJson(json);
 
   Map<String, dynamic> toJson() => _$CheckPointToJson(this);
 
   @override
-  String toString(){
+  String toString() {
     return "$lati, $longi, $name, $completed, $id, ";
   }
 }
 
 @JsonSerializable()
 class Point {
-  Point({
-    required this.lati,
-    required this.longi,
-  });
+  Point({required this.lati, required this.longi});
 
   final double? lati;
   static const String latiKey = "lati";
@@ -322,15 +314,8 @@ class Point {
   final double? longi;
   static const String longiKey = "longi";
 
-
-  Point copyWith({
-    double? lati,
-    double? longi,
-  }) {
-    return Point(
-      lati: lati ?? this.lati,
-      longi: longi ?? this.longi,
-    );
+  Point copyWith({double? lati, double? longi}) {
+    return Point(lati: lati ?? this.lati, longi: longi ?? this.longi);
   }
 
   factory Point.fromJson(Map<String, dynamic> json) => _$PointFromJson(json);
@@ -338,7 +323,7 @@ class Point {
   Map<String, dynamic> toJson() => _$PointToJson(this);
 
   @override
-  String toString(){
+  String toString() {
     return "$lati, $longi, ";
   }
 }
@@ -370,11 +355,9 @@ class Feedback {
   final DateTime? createdAt;
   static const String createdAtKey = "createdAt";
 
-
   @JsonKey(name: '__v')
   final int? v;
   static const String vKey = "__v";
-
 
   Feedback copyWith({
     String? id,
@@ -394,12 +377,13 @@ class Feedback {
     );
   }
 
-  factory Feedback.fromJson(Map<String, dynamic> json) => _$FeedbackFromJson(json);
+  factory Feedback.fromJson(Map<String, dynamic> json) =>
+      _$FeedbackFromJson(json);
 
   Map<String, dynamic> toJson() => _$FeedbackToJson(this);
 
   @override
-  String toString(){
+  String toString() {
     return "$id, $userHistoryId, $rating, $ratingComment, $createdAt, $v, ";
   }
 }
@@ -516,7 +500,6 @@ class LiveDataArr {
   final DateTime? utcsystemtime;
   static const String utcsystemtimeKey = "utcsystemtime";
 
-
   @JsonKey(name: 'vehiclestatus_new')
   final String? vehiclestatusNew;
   static const String vehiclestatusNewKey = "vehiclestatus_new";
@@ -550,7 +533,6 @@ class LiveDataArr {
 
   final String? shorturl;
   static const String shorturlKey = "shorturl";
-
 
   LiveDataArr copyWith({
     String? vehicleno,
@@ -628,13 +610,67 @@ class LiveDataArr {
     );
   }
 
-  factory LiveDataArr.fromJson(Map<String, dynamic> json) => _$LiveDataArrFromJson(json);
+  factory LiveDataArr.fromJson(Map<String, dynamic> json) =>
+      _$LiveDataArrFromJson(json);
 
   Map<String, dynamic> toJson() => _$LiveDataArrToJson(this);
 
   @override
-  String toString(){
+  String toString() {
     return "$vehicleno, $vehicleid, $kind, $unitno, $groupname, $vehiclestatus, $lat, $lng, $location, $lastupdated, $vehiclespeed, $odometer, $distance, $digitalstatus, $temperature1, $temperature2, $temperature3, $temperature4, $drivername, $ignition, $timestamp, $utctimestamp, $systemtime, $utcsystemtime, $vehiclestatusNew, $doorSensor1, $doorSensor2, $idleSince, $direction, $deviceId, $locationName, $type, $vehicleMotionStatus, $deviceTrackingState, $shorturl, ";
+  }
+}
+
+@JsonSerializable()
+class CheckpointsModel {
+  CheckpointsModel({
+    required this.checkpointName,
+    required this.checkpointLat,
+    required this.checkpointLng,
+    required this.inTime,
+    required this.inTemp,
+    required this.id,
+    required this.outTemp,
+    required this.outTime,
+    required this.timeSpent,
+  });
+
+  final String? checkpointName;
+  static const String checkpointNameKey = "checkpointName";
+
+  final double? checkpointLat;
+  static const String checkpointLatKey = "checkpointLat";
+
+  final double? checkpointLng;
+  static const String checkpointLngKey = "checkpointLng";
+
+  final DateTime? inTime;
+  static const String inTimeKey = "inTime";
+
+  final String? inTemp;
+  static const String inTempKey = "inTemp";
+
+  @JsonKey(name: '_id')
+  final String? id;
+  static const String idKey = "_id";
+
+  final String? outTemp;
+  static const String outTempKey = "outTemp";
+
+  final DateTime? outTime;
+  static const String outTimeKey = "outTime";
+
+  final int? timeSpent;
+  static const String timeSpentKey = "timeSpent";
+
+  factory CheckpointsModel.fromJson(Map<String, dynamic> json) =>
+      _$CheckpointsModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CheckpointsModelToJson(this);
+
+  @override
+  String toString() {
+    return "$checkpointName, $checkpointLat, $checkpointLng, $inTime, $inTemp, $id, $outTemp, $outTime, $timeSpent, ";
   }
 }
 
@@ -674,14 +710,12 @@ class UserId {
   final DateTime? updatedAt;
   static const String updatedAtKey = "updatedAt";
 
-
   @JsonKey(name: '__v')
   final int? v;
   static const String vKey = "__v";
 
   final DateTime? lastLogin;
   static const String lastLoginKey = "lastLogin";
-
 
   UserId copyWith({
     String? id,
@@ -712,7 +746,7 @@ class UserId {
   Map<String, dynamic> toJson() => _$UserIdToJson(this);
 
   @override
-  String toString(){
+  String toString() {
     return "$id, $mobileNumber, $role, $isActive, $onboardingStatus, $createdAt, $updatedAt, $v, $lastLogin, ";
   }
 }

@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
-import 'package:just_delivery/screens/dashboard_screen/home_screen/liveTracking/liveTrackingDataModel.dart';
+
 
 import '../../../../api/api_service.dart';
 import '../../../../constants/api_constants.dart';
-import '../../../../customWidgets/customLoader.dart';
+
+import 'liveTrackingDataModel.dart';
 
 class LiveTrackingController extends GetxController{
 

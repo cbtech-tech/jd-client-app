@@ -11,7 +11,6 @@ String formatDateTime(String dateTimeString) {
   }
 }
 
-
 class LocationService {
   final Dio _dio = Dio();
   final String _apiKey = ApiConstants().YOUR_API_KEY;
@@ -38,6 +37,3 @@ class LocationService {
     }
   }
 }
-
-
-

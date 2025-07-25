@@ -129,8 +129,12 @@ class AssignedVehicle {
   final String? natureofGoods;
   static const String natureofGoodsKey = "natureofGoods";
 
-  final String? companyName;
-  static const String companyNameKey = "companyName";
+  // final String? companyName;
+  // static const String companyNameKey = "companyName";
+
+
+final CompanyNameModel? companyName;
+static const String companyNameKey = "companyName";
 
   final String? consignorName;
   static const String consignorNameKey = "consignorName";
@@ -176,7 +180,8 @@ class AssignedVehicle {
     bool? delayStatus,
     int? delayTime,
     String? natureofGoods,
-    String? companyName,
+   CompanyNameModel? companyName,
+
     String? consignorName,
     String? managerName,
     int? managerNumber,
@@ -203,7 +208,9 @@ class AssignedVehicle {
       delayStatus: delayStatus ?? this.delayStatus,
       delayTime: delayTime ?? this.delayTime,
       natureofGoods: natureofGoods ?? this.natureofGoods,
+      // companyName: companyName ?? this.companyName,
       companyName: companyName ?? this.companyName,
+
       consignorName: consignorName ?? this.consignorName,
       managerName: managerName ?? this.managerName,
       managerNumber: managerNumber ?? this.managerNumber,
@@ -278,6 +285,46 @@ class CheckPoint {
     return "$lati, $longi, $name, $completed, $id, ";
   }
 }
+
+
+@JsonSerializable()
+class CompanyNameModel {
+  CompanyNameModel({
+    required this.id,
+    required this.companyName,
+    required this.location,
+    required this.timestamp,
+    required this.v,
+  });
+
+  @JsonKey(name: "_id")
+  final String? id;
+  static const String idKey = "_id";
+
+  final String? companyName;
+  static const String companyNameKey = "companyName";
+
+  final String? location;
+  static const String locationKey = "location";
+
+  final DateTime? timestamp;
+  static const String timestampKey = "timestamp";
+
+  @JsonKey(name: "__v")
+  final int? v;
+  static const String vKey = "__v";
+
+  factory CompanyNameModel.fromJson(Map<String, dynamic> json) =>
+      _$CompanyNameModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CompanyNameModelToJson(this);
+
+  @override
+  String toString() {
+    return "$id, $companyName, $location, $timestamp, $v";
+  }
+}
+
 
 @JsonSerializable()
 class Point {

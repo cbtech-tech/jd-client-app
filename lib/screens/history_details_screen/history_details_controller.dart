@@ -1,15 +1,15 @@
-import 'dart:convert';
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:just_delivery/constants/api_constants.dart';
-import 'package:just_delivery/customWidgets/customLoader.dart';
+import 'package:just_delivery/screens/dashboard_screen/history_screen/historyController.dart';
 
 import '../../api/api_service.dart';
 import '../../customWidgets/snackbar.dart';
-import '../../utils/commonFuntions.dart';
+import '../../utils/common_funtions.dart';
 import '../dashboard_screen/history_screen/historyDataModel.dart';
 
 class HistoryDetailsController extends GetxController {
@@ -22,13 +22,14 @@ class HistoryDetailsController extends GetxController {
   GoogleMapController? mapController;
   RxSet<Polyline> polyLines = <Polyline>{}.obs;
   final RxInt rating = 0.obs;
-   RxBool isEditable = true.obs;
+  RxBool isEditable = true.obs;
   final ApiService apiService = Get.find();
+  RxBool isLoading = true.obs;
 
   var startAddress = "".obs;
   var endAddress = "".obs;
 
-  var distance = "".obs;
+  // var distance = "".obs;
 
   var storeName = "".obs;
   final selectedFeedback = <String>{}.obs;
@@ -40,6 +41,7 @@ class HistoryDetailsController extends GetxController {
       selectedFeedback.add(item);
     }
   }
+
   final List<String> feedback = [
     "Temperature Issue",
     "Timing/Delay",
@@ -47,18 +49,14 @@ class HistoryDetailsController extends GetxController {
     "Driver behaviour",
     "Vehicle hygiene",
     "Material damage",
-  "Vehicle did not report",
+    "Vehicle did not report",
     "Vehicle change without intimation",
-    "Delivery manager behaviour"
+    "Delivery manager behaviour",
   ];
-
-
 
   @override
   void onInit() {
     super.onInit();
-
-
 
     final args = Get.arguments as Map<String, dynamic>;
     model = args['args'];
@@ -99,132 +97,177 @@ class HistoryDetailsController extends GetxController {
       ),
     );
 
-    getDistanceWithDio();
+    // getDistanceWithDio();
     getPlaceNameWithLatitude();
+
+    isLoading.value = false;
   }
 
   void setMapController(GoogleMapController controller) {
     mapController = controller;
     setMapBounds(); // Focus on both markers
-
   }
-  void setMapBounds() {
-    if (startPoint == null || endPoint == null || mapController == null) return;
 
-    if ((startPoint.value!.latitude == 0.0 && startPoint.value!.longitude == 0.0) ||
-        (endPoint.value!.latitude == 0.0 && endPoint.value!.longitude == 0.0)) {
-      print("❌ Invalid coordinates: (0.0, 0.0)");
+  // void setMapBounds() {
+  //   if (startPoint == null || endPoint == null || mapController == null) return;
+
+  //   if ((startPoint.value!.latitude == 0.0 && startPoint.value!.longitude == 0.0) ||
+  //       (endPoint.value!.latitude == 0.0 && endPoint.value!.longitude == 0.0)) {
+  //     print("❌ Invalid coordinates: (0.0, 0.0)");
+  //     return;
+  //   }
+
+  //     if (startPoint.value == null || endPoint.value == null ||
+  //         mapController == null) return;
+
+  //     final LatLng start = startPoint.value!;
+  //     final LatLng end = endPoint.value!;
+
+  //     if ((start.latitude == 0.0 && start.longitude == 0.0) ||
+  //         (end.latitude == 0.0 && end.longitude == 0.0)) {
+  //       print("❌ Invalid coordinates: (0.0, 0.0)");
+  //       return;
+  //     }
+
+  //     LatLngBounds bounds = LatLngBounds(
+  //       southwest: LatLng(
+  //         start.latitude < end.latitude ? start.latitude : end.latitude,
+  //         start.longitude < end.longitude ? start.longitude : end.longitude,
+  //       ),
+  //       northeast: LatLng(
+  //         start.latitude > end.latitude ? start.latitude : end.latitude,
+  //         start.longitude > end.longitude ? start.longitude : end.longitude,
+  //       ),
+  //     );
+
+  //     mapController!.animateCamera(
+  //       CameraUpdate.newLatLngBounds(bounds, 70),
+  //     );
+
+  //     mapController!.animateCamera(
+  //       CameraUpdate.newLatLngBounds(bounds, 70),
+  //     );
+  //   }
+
+  void setMapBounds() {
+    if (startPoint.value == null ||
+        endPoint.value == null ||
+        mapController == null)
+      return;
+
+    final start = startPoint.value!;
+    final end = endPoint.value!;
+
+    // Check for invalid coordinates
+    if ((start.latitude == 0.0 && start.longitude == 0.0) ||
+        (end.latitude == 0.0 && end.longitude == 0.0)) {
+      print(" Invalid coordinates: (0.0, 0.0)");
       return;
     }
 
+    LatLngBounds bounds = LatLngBounds(
+      southwest: LatLng(
+        start.latitude < end.latitude ? start.latitude : end.latitude,
+        start.longitude < end.longitude ? start.longitude : end.longitude,
+      ),
+      northeast: LatLng(
+        start.latitude > end.latitude ? start.latitude : end.latitude,
+        start.longitude > end.longitude ? start.longitude : end.longitude,
+      ),
+    );
 
-      if (startPoint.value == null || endPoint.value == null ||
-          mapController == null) return;
-
-      final LatLng start = startPoint.value!;
-      final LatLng end = endPoint.value!;
-
-      if ((start.latitude == 0.0 && start.longitude == 0.0) ||
-          (end.latitude == 0.0 && end.longitude == 0.0)) {
-        print("❌ Invalid coordinates: (0.0, 0.0)");
-        return;
-      }
-
-      LatLngBounds bounds = LatLngBounds(
-        southwest: LatLng(
-          start.latitude < end.latitude ? start.latitude : end.latitude,
-          start.longitude < end.longitude ? start.longitude : end.longitude,
-        ),
-        northeast: LatLng(
-          start.latitude > end.latitude ? start.latitude : end.latitude,
-          start.longitude > end.longitude ? start.longitude : end.longitude,
-        ),
-      );
-
-      mapController!.animateCamera(
-        CameraUpdate.newLatLngBounds(bounds, 70),
-      );
-
-
-      mapController!.animateCamera(
-        CameraUpdate.newLatLngBounds(bounds, 70),
-      );
-    }
-
-  Future<void> getDistanceWithDio() async {
-  LoaderUtil.showLoader();
-    var apiKey = ApiConstants().YOUR_API_KEY; // Replace with your real key
-
-    final url = 'https://maps.googleapis.com/maps/api/distancematrix/json';
-
-    try {
-      final dio = Dio();
-      final response = await dio.get(url, queryParameters: {
-        'origins': startPoint.value,
-        'destinations': endPoint.value,
-        'key': apiKey,
-      });
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-         distance.value = data['rows'][0]['elements'][0]['distance']['text'].toString();
-        final duration = data['rows'][0]['elements'][0]['duration']['text'];
-        LoaderUtil.hideLoader();
-        print('Distance==>>: $distance');
-        print('Duration: $duration');
-      } else {
-        LoaderUtil.hideLoader();
-        print('Request failed with status: ${response.statusCode}');
-      }
-    } catch (e) {
-      LoaderUtil.hideLoader();
-      print('Error: $e');
-    }
+    mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 70));
   }
 
+  // Future<void> getDistanceWithDio() async {
+  //   // LoaderUtil.showLoader();
+  //   var apiKey = ApiConstants().YOUR_API_KEY; // Replace with your real key
+
+  //   final url = 'https://maps.googleapis.com/maps/api/distancematrix/json';
+
+  //   try {
+  //     final dio = Dio();
+  //     final response = await dio.get(
+  //       url,
+  //       queryParameters: {
+  //         'origins': startPoint.value,
+  //         'destinations': endPoint.value,
+  //         'key': apiKey,
+  //       },
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       final data = response.data;
+
+  //       log(
+  //         "data======================>>>>${data['rows'][0]['elements'][0]['distance']['text'].toString()}",
+  //       );
+  //       // distance.value =
+  //       //     data['rows'][0]['elements'][0]['distance']['text'].toString();
+  //       final duration =
+  //           data['rows'][0]['elements'][0]['duration']['text'].toString();
+  //       // LoaderUtil.hideLoader();
+  //       // log('Distance==>>: $distance');
+  //       log('Duration: $duration');
+  //     } else {
+  //       // LoaderUtil.hideLoader();
+  //       log('Request failed with status: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     // LoaderUtil.hideLoader();
+  //     log('Error: $e');
+  //   }
+  // }
+
   Future<void> getPlaceNameWithLatitude() async {
+    final locationService = LocationService();
+    startAddress.value =
+        (await locationService.getAddressFromCoordinates(
+          startPoint.value!.latitude,
+          startPoint.value!.longitude,
+        ))!;
+    endAddress.value =
+        (await locationService.getAddressFromCoordinates(
+          endPoint.value!.latitude,
+          endPoint.value!.longitude,
+        ))!;
 
-      final locationService = LocationService();
-      startAddress.value = (await locationService.getAddressFromCoordinates(startPoint.value!.latitude, startPoint.value!.longitude))!;
-      endAddress.value = (await locationService.getAddressFromCoordinates(endPoint.value!.latitude, endPoint.value!.longitude))!;
+    storeName.value =
+        getLocationName(
+          endPoint.value!.latitude,
+          endPoint.value!.longitude,
+        ).toString();
 
-
-    storeName.value=  getLocationName(endPoint.value!.latitude, endPoint.value!.longitude).toString();
-
-      print("==>>  startAddress.value  ${ startAddress.value }");
-
+    print("==>>  startAddress.value  ${startAddress.value}");
   }
 
   String? getLocationName(double lat, double lng) {
     try {
-      return model!.assignedVehicle!.checkPoint!.firstWhere(
+      return model!.assignedVehicle!.checkPoint!
+          .firstWhere(
             (location) => location.lati == lat && location.longi == lng,
-      ).name;
+          )
+          .name;
     } catch (e) {
       return null; // or return "Unknown"
     }
   }
 
-
   setFeedbackToApi() async {
+    final historyController = Get.find<HistoryController>();
 
-    print("==>> selectedFeedback.toList() ${ selectedFeedback.toList()} ");
-   final map =  {
+    final map = {
       "userHistoryId": "${model?.id.toString()}",
-    "rating": rating.value,
-    "ratingComment":
-      selectedFeedback.toList()
+      "rating": rating.value,
+      "ratingComment": selectedFeedback.toList(),
+    };
+    final response = await apiService.postRequest(ApiConstants().feedback, map);
+    if (response.isSuccess) {
+      SnackbarUtil.showSuccessTop("Feedback submitted successfully");
 
-  };
-    final response = await apiService.postRequest(ApiConstants().feedback,map);
-   if (response.isSuccess){
-     SnackbarUtil.showSuccessTop("Feedback submitted successfully");
+      historyController.fetchAllHistory();
 
-     isEditable .value= false;
-
-   }
-
+      isEditable.value = false;
+    }
   }
-
-
 }

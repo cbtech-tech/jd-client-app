@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../theme/theme_helper.dart';
 
 class LoaderController extends GetxController {
@@ -28,7 +27,6 @@ class LoaderUtil {
           canPop: false,
           child: Center(
             child: Container(
-
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(12),

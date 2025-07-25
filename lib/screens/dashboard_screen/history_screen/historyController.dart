@@ -1,10 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:just_delivery/customWidgets/snackbar.dart';
 import 'package:just_delivery/screens/dashboard_screen/history_screen/historyDataModel.dart';
 import '../../../api/api_service.dart';
 import '../../../constants/api_constants.dart';
-import '../../../customWidgets/customLoader.dart';
+import '../../../customWidgets/snackbar.dart';
 import '../../../routes/app_routes.dart';
 
 class HistoryController extends GetxController {
@@ -13,8 +14,10 @@ class HistoryController extends GetxController {
   final List<String> options = ['all'.tr, 'completed'.tr, 'cancelled'.tr];
 
   final RxInt rating = 0.obs;
+  RxBool isfeedback = false.obs;
   RxBool isEditable = true.obs;
   var selectedDate = Rxn<DateTime>();
+  RxBool isLoading = false.obs;
 
   final ApiService apiService = Get.find();
 
@@ -57,36 +60,109 @@ class HistoryController extends GetxController {
     });
   }
 
-  /// Fetch history from API
+  // // / Fetch history from API
+  // Future<void> fetchAllHistory() async {
+  //   LoaderUtil.showLoader();
+
+  //   try {
+  //     final response = await apiService.getRequest(ApiConstants().userHistory);
+  //     LoaderUtil.hideLoader();
+
+  //     log("History Detail data=>>>>>${response.data}");
+
+  //     if (response.isSuccess) {
+  //       historyDataModel = HistoryDataModel.fromJson(response.data);
+
+  //       if (historyDataModel?.status ?? false) {
+  //         originalList.assignAll(historyDataModel?.data ?? []);
+  //         historyList.assignAll(originalList);
+  //         print("==>> originalList fetched: ${originalList.length}");
+
+  //         SnackbarUtil.showSuccessTop("History fetched successfully");
+  //       } else {
+  //         historyList.clear();
+  //       }
+  //     } else {
+  //       historyList.clear();
+  //       print("==>> API Error: historyList cleared");
+  //     }
+  //   } catch (e) {
+  //     historyList.clear();
+  //     LoaderUtil.hideLoader();
+  //     print("HistoryController error: ${e.toString()}");
+  //   }
+  // }
+
   Future<void> fetchAllHistory() async {
-    LoaderUtil.showLoader();
+    isLoading.value = true; // 1. UI me indicator ke liye
+    // LoaderUtil.showLoader(); // 2. Overlay loader
 
     try {
       final response = await apiService.getRequest(ApiConstants().userHistory);
-      LoaderUtil.hideLoader();
-
+      // LoaderUtil.hideLoader();
+      log("History=========>${response.data}");
       if (response.isSuccess) {
         historyDataModel = HistoryDataModel.fromJson(response.data);
-
         if (historyDataModel?.status ?? false) {
           originalList.assignAll(historyDataModel?.data ?? []);
           historyList.assignAll(originalList);
-          print("==>> originalList fetched: ${originalList.length}");
-
-          SnackbarUtil.showSuccessTop("History fetched successfully");
+          // SnackbarUtil.showSuccessTop("History fetched successfully");
         } else {
           historyList.clear();
         }
       } else {
         historyList.clear();
-        print("==>> API Error: historyList cleared");
       }
     } catch (e) {
+      // LoaderUtil.hideLoader();
       historyList.clear();
-      LoaderUtil.hideLoader();
-      print("HistoryController error: ${e.toString()}");
+      print("Error: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
+
+  //   Future<void> fetchAllHistory() async {
+  //   isLoading.value = true;
+
+  //   try {
+  //     final response = await apiService.getRequest(ApiConstants().userHistory);
+  //     log("History=========>${response.data}");
+
+  //     if (response.isSuccess) {
+  //       historyDataModel = HistoryDataModel.fromJson(response.data);
+
+  //       if (historyDataModel?.status ?? false) {
+  //         originalList.assignAll(historyDataModel?.data ?? []);
+  //         historyList.assignAll(originalList);
+
+  //         // ✅ Rating update logic here
+  //         if (originalList.isNotEmpty) {
+  //           final firstItem = originalList.first;
+
+  //           if (firstItem.feedbacks != null &&
+  //               firstItem.feedbacks!.isNotEmpty &&
+  //               firstItem.feedbacks!.first.rating != null) {
+  //             rating.value = firstItem.feedbacks!.first.rating!;
+  //           } else {
+  //             rating.value = 0; // default
+  //           }
+  //         }
+
+  //         SnackbarUtil.showSuccessTop("History fetched successfully");
+  //       } else {
+  //         historyList.clear();
+  //       }
+  //     } else {
+  //       historyList.clear();
+  //     }
+  //   } catch (e) {
+  //     historyList.clear();
+  //     print("Error: $e");
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   /// Filter based on selected option
   void filterList(String option) {
@@ -99,7 +175,8 @@ class HistoryController extends GetxController {
       case 'completed':
         historyList.assignAll(
           originalList.where((model) {
-            final status = model.assignedVehicle?.deliveryStatus?.toLowerCase() ?? '';
+            final status =
+                model.assignedVehicle?.deliveryStatus?.toLowerCase() ?? '';
             return status == 'completed' || status == 'delivered';
           }).toList(),
         );
@@ -108,7 +185,8 @@ class HistoryController extends GetxController {
       case 'cancelled':
         historyList.assignAll(
           originalList.where((model) {
-            final status = model.assignedVehicle?.deliveryStatus?.toLowerCase() ?? '';
+            final status =
+                model.assignedVehicle?.deliveryStatus?.toLowerCase() ?? '';
             return status == 'cancelled';
           }).toList(),
         );
@@ -124,9 +202,7 @@ class HistoryController extends GetxController {
 
   /// Navigate to history details screen
   void moveToHistory(Datum model) {
-    Get.toNamed(AppRoutes.historyDetails, arguments: {
-      "args": model,
-    });
+    Get.toNamed(AppRoutes.historyDetails, arguments: {"args": model});
   }
 
   /// Submit feedback to API
@@ -137,10 +213,16 @@ class HistoryController extends GetxController {
       "ratingComment": selectedFeedback.toList(),
     };
 
-    final response = await apiService.postRequest(ApiConstants().feedback, payload);
+    final response = await apiService.postRequest(
+      ApiConstants().feedback,
+      payload,
+    );
+
+    log("setFeedback=>>>${response.data}");
 
     if (response.isSuccess) {
       SnackbarUtil.showSuccessTop("Feedback submitted successfully");
+      fetchAllHistory();
       isEditable.value = false;
     }
   }

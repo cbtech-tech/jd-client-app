@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/api_constants.dart';
 import '../utils/pref_utils.dart';
 import 'api_result.dart';
@@ -22,15 +22,15 @@ class ApiService extends GetConnect {
       if (token != null) {
         request.headers['Authorization'] = 'Bearer $token';
       }
-      print('request.header-> ➡️${request.headers['Authorization']}');
+      log('request.header-> ➡️${request.headers['Authorization']}');
 
-      print('method and url -> ➡️ ${request.method} ${request.url}');
+      log('method and url -> ➡️ ${request.method} ${request.url}');
       return request;
     });
 
     // 📥 Response Interceptor
     httpClient.addResponseModifier((request, response) {
-      print('status code->⬅️ ${response.statusCode} for ${response.body}');
+      log('status code->⬅️ ${response.statusCode} for ${response.body}');
       return response;
     });
   }

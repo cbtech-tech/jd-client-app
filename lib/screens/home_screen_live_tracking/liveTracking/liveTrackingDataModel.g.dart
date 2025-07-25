@@ -57,7 +57,12 @@ AssignedVehicle _$AssignedVehicleFromJson(Map<String, dynamic> json) =>
       delayStatus: json['delayStatus'] as bool?,
       delayTime: (json['delayTime'] as num?)?.toInt(),
       natureofGoods: json['natureofGoods'] as String?,
-      companyName: json['companyName'] as String?,
+      companyName:
+          json['companyName'] == null
+              ? null
+              : CompanyNameModel.fromJson(
+                json['companyName'] as Map<String, dynamic>,
+              ),
       consignorName: json['consignorName'] as String?,
       managerName: json['managerName'] as String?,
       managerNumber: (json['managerNumber'] as num?)?.toInt(),
@@ -118,6 +123,27 @@ Map<String, dynamic> _$CheckPointToJson(CheckPoint instance) =>
       'name': instance.name,
       'completed': instance.completed,
       '_id': instance.id,
+    };
+
+CompanyNameModel _$CompanyNameModelFromJson(Map<String, dynamic> json) =>
+    CompanyNameModel(
+      id: json['_id'] as String?,
+      companyName: json['companyName'] as String?,
+      location: json['location'] as String?,
+      timestamp:
+          json['timestamp'] == null
+              ? null
+              : DateTime.parse(json['timestamp'] as String),
+      v: (json['__v'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$CompanyNameModelToJson(CompanyNameModel instance) =>
+    <String, dynamic>{
+      '_id': instance.id,
+      'companyName': instance.companyName,
+      'location': instance.location,
+      'timestamp': instance.timestamp?.toIso8601String(),
+      '__v': instance.v,
     };
 
 Point _$PointFromJson(Map<String, dynamic> json) => Point(

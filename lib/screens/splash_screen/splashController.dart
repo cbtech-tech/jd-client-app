@@ -9,7 +9,7 @@ class SplashController  extends GetxController{
     // TODO: implement onInit
     super.onInit();
 
-    //checkUserExist();
+    // checkUserExist();
 
   }
 

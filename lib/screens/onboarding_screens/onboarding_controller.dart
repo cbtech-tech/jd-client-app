@@ -5,21 +5,17 @@ import 'package:just_delivery/screens/onboarding_screens/onboarding_screen2.dart
 import '../../customWidgets/snackbar.dart';
 import 'onboardingController2.dart';
 
-class OnboardingController extends GetxController{
+class OnboardingController extends GetxController {
+  TextEditingController companyEmailController = TextEditingController();
+  TextEditingController companyNumberController = TextEditingController();
+  TextEditingController authorizedNameController = TextEditingController();
+  TextEditingController brandNameController = TextEditingController();
+  TextEditingController registeredCompanyController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
 
+  TextEditingController pincodeController = TextEditingController();
 
-
-  TextEditingController companyEmailController = TextEditingController() ;
-  TextEditingController companyNumberController = TextEditingController() ;
-  TextEditingController authorizedNameController = TextEditingController() ;
-  TextEditingController brandNameController = TextEditingController() ;
-  TextEditingController registeredCompanyController = TextEditingController() ;
-
-
-
-
-
-  RxString companyDesgintation  = "".obs;
+  RxString companyDesgintation = "".obs;
 
   static const List<String> list = [
     'Store Manager',
@@ -28,9 +24,7 @@ class OnboardingController extends GetxController{
     'Staff',
   ];
 
-
   void next() {
-
     if (companyEmailController.text.isEmpty) {
       SnackbarUtil.showErrorTop("Company Email can't be empty");
       return;
@@ -77,13 +71,11 @@ class OnboardingController extends GetxController{
     };
 
     Get.to(
-          () => OnboardingScreens2(),
+      () => OnboardingScreens2(),
       arguments: data,
       binding: BindingsBuilder(() {
         Get.lazyPut<OnboardingController2>(() => OnboardingController2());
       }),
     );
   }
-
-
 }

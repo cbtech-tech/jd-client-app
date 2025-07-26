@@ -8,10 +8,10 @@ import '../home_screen_live_tracking/liveTracking/liveTrackingController.dart';
 class BottomBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => HistoryController());
-    Get.lazyPut(() => HomeController());
-    Get.lazyPut(() => ProfileController());
-    Get.lazyPut(() => LiveTrackingController());
-    Get.lazyPut(() => LiveTrackingHomeController());
+    Get.lazyPut(() => HistoryController(), fenix: true);
+    Get.lazyPut(() => HomeController(), fenix: true);
+    Get.lazyPut(() => ProfileController(), fenix: true);
+    Get.lazyPut(() => LiveTrackingController(), fenix: true);
+    Get.lazyPut(() => LiveTrackingHomeController(), fenix: true);
   }
 }

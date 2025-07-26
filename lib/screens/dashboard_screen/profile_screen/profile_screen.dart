@@ -22,7 +22,7 @@ class MenuListScreen extends GetView<ProfileController> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Just Deliverie",
+              "JustDeliveries",
               style: CustomTextStyle.subHeading(
                 color: ThemeHelper().appColor,
                 fontSize: 20.sp,

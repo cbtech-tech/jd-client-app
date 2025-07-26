@@ -264,6 +264,16 @@ class HistoryDetailsScreen extends GetView<HistoryDetailsController> {
                         CustomButton(
                           text: "Get Report",
                           onTap: () {
+                            String? invoiceNo = controller
+                                .model!
+                                .liveDataArr
+                                ?.first
+                                .utctimestamp
+                                ?.toString()
+                                .replaceAll(RegExp(r'[^0-9]'), '');
+                            String date = formatDateTime(
+                              controller.model!.createdAt?.toString() ?? '',
+                            );
                             final List<Map<String, dynamic>>
                             deliveryReportData =
                                 controller.model!.checkpoints
@@ -285,6 +295,9 @@ class HistoryDetailsScreen extends GetView<HistoryDetailsController> {
                                         "timeSpent":
                                             checkpoint.timeSpent?.toString() ??
                                             '',
+                                        "invoiceNO": invoiceNo ?? "",
+
+                                        "date": date,
                                       },
                                     )
                                     .toList() ??

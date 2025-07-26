@@ -308,8 +308,9 @@ final List<Map<String, String>> deliveryReportData = [
 //   await OpenFile.open(file.path);
 // }
 
-
-Future<void> generateDeliveryReportPDF(List<Map<String, dynamic>> deliveryReportData) async {
+Future<void> generateDeliveryReportPDF(
+  List<Map<String, dynamic>> deliveryReportData,
+) async {
   final pdf = pw.Document();
   final imageLogo = pw.MemoryImage(
     (await rootBundle.load(ImageConstants.jdPdfLogo)).buffer.asUint8List(),
@@ -326,161 +327,175 @@ Future<void> generateDeliveryReportPDF(List<Map<String, dynamic>> deliveryReport
   pdf.addPage(
     pw.MultiPage(
       pageFormat: PdfPageFormat.a4.landscape,
-      build: (context) => [
-        // Header
-        pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          children: [
-            pw.Image(imageLogo, width: 80, height: 80),
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.end,
+      build:
+          (context) => [
+            // Header
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
-                pw.Row(
+                pw.Image(imageLogo, width: 80, height: 80),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
-                    pw.Text("Invoice Number: ",
-                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    pw.Text("CRN1845806620",
-                        style: pw.TextStyle(color: PdfColors.grey800)),
-                  ],
-                ),
-                pw.Row(
-                  children: [
-                    pw.Text("Date: ",
-                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    pw.Text("24 Jul 2025",
-                        style: pw.TextStyle(color: PdfColors.grey800)),
+                    pw.Row(
+                      children: [
+                        pw.Text(
+                          "Invoice Number: ",
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        ),
+                        pw.Text(
+                          deliveryReportData.isNotEmpty
+                              ? (deliveryReportData.first["invoiceNO"] ?? '')
+                              : '',
+                          style: pw.TextStyle(color: PdfColors.grey800),
+                        ),
+                      ],
+                    ),
+                    pw.Row(
+                      children: [
+                        pw.Text(
+                          "Date: ",
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        ),
+                        pw.Text(
+                          deliveryReportData.isNotEmpty
+                              ? (deliveryReportData.first["date"] ?? '')
+                              : '',
+                          style: pw.TextStyle(color: PdfColors.grey800),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],
             ),
-          ],
-        ),
-        pw.SizedBox(height: 10),
+            pw.SizedBox(height: 10),
 
-        // Table with limited fields
-        pw.TableHelper.fromTextArray(
-          headers: [
-            "Checkpoint Name",
-            "In Time",
-            "In Temp",
-            "Out Time",
-            "Out Temp",
-            "Time Spent (min)",
-          ],
-          cellAlignment: pw.Alignment.centerLeft,
-          headerStyle: pw.TextStyle(
-            fontWeight: pw.FontWeight.bold,
-            fontSize: 10,
-          ),
-          headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
-          cellStyle: pw.TextStyle(fontSize: 9),
-          data: deliveryReportData.map((row) {
-            return [
-              row["checkpointName"] ?? '',
-              row["inTime"] ?? '',
-              row["inTemp"] ?? '',
-              row["outTime"] ?? '',
-              row["outTemp"] ?? '',
-              row["timeSpent"] ?? '',
-            ];
-          }).toList(),
-        ),
+            // Table with limited fields
+            pw.TableHelper.fromTextArray(
+              headers: [
+                "Checkpoint Name",
+                "In Time",
+                "In Temp",
+                "Out Time",
+                "Out Temp",
+                "Time Spent (min)",
+              ],
+              cellAlignment: pw.Alignment.centerLeft,
+              headerStyle: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold,
+                fontSize: 10,
+              ),
+              headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
+              cellStyle: pw.TextStyle(fontSize: 9),
+              data:
+                  deliveryReportData.map((row) {
+                    return [
+                      row["checkpointName"] ?? '',
+                      row["inTime"] ?? '',
+                      row["inTemp"] ?? '',
+                      row["outTime"] ?? '',
+                      row["outTemp"] ?? '',
+                      row["timeSpent"] ?? '',
+                    ];
+                  }).toList(),
+            ),
 
-        pw.SizedBox(height: 20),
+            pw.SizedBox(height: 20),
 
-        // Footer
-        pw.Divider(thickness: 1),
-        pw.Center(
-          child: pw.Container(
-            width: footerWidth,
-            child: pw.Column(
-              children: [
-                pw.SizedBox(height: 10),
-                pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            // Footer
+            pw.Divider(thickness: 1),
+            pw.Center(
+              child: pw.Container(
+                width: footerWidth,
+                child: pw.Column(
                   children: [
-                    // Left Column
-                    pw.Column(
+                    pw.SizedBox(height: 10),
+                    pw.Row(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Text(
-                          "Smartshift Logistics Solutions Pvt. Ltd.",
-                          style: pw.TextStyle(
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 10,
-                          ),
-                        ),
-                        pw.SizedBox(height: 2),
-                        pw.Text(
-                          "Main Office: 301B, Jolly Bhavan2, New Marine\nLines, Mumbai 400020",
-                          style: pw.TextStyle(fontSize: 9),
-                        ),
-                      ],
-                    ),
-
-                    // Center Column
-                    pw.Column(
-                      children: [
-                        pw.Text(
-                          "Signature Behalf\nof JustDeliveries",
-                          textAlign: pw.TextAlign.center,
-                          style: pw.TextStyle(fontSize: 9),
-                        ),
-                        pw.SizedBox(height: 6),
-                        pw.Container(
-                          width: 30,
-                          height: 30,
-                          decoration: pw.BoxDecoration(
-                            color: PdfColors.white,
-                            shape: pw.BoxShape.circle,
-                            border: pw.Border.all(
-                              color: PdfColors.black,
-                              width: 0.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    // Right Column
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      mainAxisAlignment: pw.MainAxisAlignment.start,
-                      children: [
-                        pw.Row(
+                        // Left Column
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
-                            pw.Image(email, height: 12, width: 12),
                             pw.Text(
-                              " sales@jdindia.co.in",
+                              "Smartshift Logistics Solutions Pvt. Ltd.",
+                              style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: 10,
+                              ),
+                            ),
+                            pw.SizedBox(height: 2),
+                            pw.Text(
+                              "Main Office: 301B, Jolly Bhavan2, New Marine\nLines, Mumbai 400020",
                               style: pw.TextStyle(fontSize: 9),
                             ),
                           ],
                         ),
-                        pw.SizedBox(height: 2),
-                        pw.Row(
+
+                        // Center Column
+                        pw.Column(
                           children: [
-                            pw.Image(call, height: 12, width: 12),
                             pw.Text(
-                              " +91 9819440499",
+                              "Signature Behalf\nof JustDeliveries",
+                              textAlign: pw.TextAlign.center,
                               style: pw.TextStyle(fontSize: 9),
+                            ),
+                            pw.SizedBox(height: 6),
+                            pw.Container(
+                              width: 30,
+                              height: 30,
+                              decoration: pw.BoxDecoration(
+                                color: PdfColors.white,
+                                shape: pw.BoxShape.circle,
+                                border: pw.Border.all(
+                                  color: PdfColors.black,
+                                  width: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Right Column
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          mainAxisAlignment: pw.MainAxisAlignment.start,
+                          children: [
+                            pw.Row(
+                              children: [
+                                pw.Image(email, height: 12, width: 12),
+                                pw.Text(
+                                  " sales@jdindia.co.in",
+                                  style: pw.TextStyle(fontSize: 9),
+                                ),
+                              ],
+                            ),
+                            pw.SizedBox(height: 2),
+                            pw.Row(
+                              children: [
+                                pw.Image(call, height: 12, width: 12),
+                                pw.Text(
+                                  " +91 9819440499",
+                                  style: pw.TextStyle(fontSize: 9),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ],
+                    ),
+                    pw.SizedBox(height: 8),
+                    pw.Text(
+                      "GSTIN no.: 27AACGR8772D1ZZ | SAC code: 996511 | CIN: U74999MH2014PTC301620 | PAN: AACGR8772D",
+                      style: pw.TextStyle(fontSize: 8),
                     ),
                   ],
                 ),
-                pw.SizedBox(height: 8),
-                pw.Text(
-                  "GSTIN no.: 27AACGR8772D1ZZ | SAC code: 996511 | CIN: U74999MH2014PTC301620 | PAN: AACGR8772D",
-                  style: pw.TextStyle(fontSize: 8),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
     ),
   );
 

@@ -161,7 +161,6 @@ class HistoryScreen extends GetView<HistoryController> {
                     itemBuilder: (context, index) {
                       var model = controller.historyList[index];
 
-
                       DateTime parsedDate =
                           DateTime.parse(
                             model.assignedVehicle?.updatedAt.toString() ??
@@ -337,6 +336,17 @@ class HistoryScreen extends GetView<HistoryController> {
                                           color: Colors.transparent,
                                           child: InkWell(
                                             onTap: () {
+                                              String? invoiceNo = model
+                                                  .liveDataArr
+                                                  ?.first
+                                                  .utctimestamp
+                                                  ?.toString()
+                                                  .replaceAll(
+                                                    RegExp(r'[^0-9]'),
+                                                    '',
+                                                  );
+                                            String date = formatDateTime(model.createdAt?.toString() ?? '');
+
                                               final List<Map<String, dynamic>>
                                               deliveryReportData =
                                                   model.checkpoints
@@ -369,6 +379,10 @@ class HistoryScreen extends GetView<HistoryController> {
                                                                   .timeSpent
                                                                   ?.toString() ??
                                                               '',
+                                                          "invoiceNO":
+                                                              invoiceNo ?? "",
+
+                                                              "date":date
                                                         },
                                                       )
                                                       .toList() ??

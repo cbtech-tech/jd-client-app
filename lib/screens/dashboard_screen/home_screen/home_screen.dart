@@ -174,9 +174,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:just_delivery/customWidgets/shimmer_effects.dart';
+import 'package:just_delivery/screens/dashboard_screen/bottomBindings.dart';
 import 'package:just_delivery/screens/dashboard_screen/homeBottomScreen.dart';
 
 import '../../../constants/image_constants.dart';
@@ -233,12 +233,7 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        "assets/images/logistic_logo.svg",
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+                    child: Center(child: Text("No Data Found")),
                   )
                   : Padding(
                     padding: const EdgeInsets.symmetric(
@@ -264,14 +259,14 @@ class HomeScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 20),
                         DeliveryListScreen(),
-                        SizedBox(height: 20),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: SvgPicture.asset(
-                            "assets/images/logistic_logo.svg",
-                            fit: BoxFit.contain,
-                          ),
-                        ),
+                        // SizedBox(height: 20),
+                        // Align(
+                        //   alignment: Alignment.bottomCenter,
+                        //   child: SvgPicture.asset(
+                        //     "assets/images/logistic_logo.svg",
+                        //     fit: BoxFit.contain,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -322,7 +317,7 @@ class DeliveryListScreen extends StatelessWidget {
                 onTap: () {
                   Get.to(
                     () => HomeBottomScreen2(),
-                    binding: LiveTrackingBinding(),
+                    binding: BottomBindings(),
                     arguments: {"id": item.id}, // ✅ Model property access
                   );
                 },

@@ -21,8 +21,8 @@ class LiveTrackingScreen extends GetView<LiveTrackingHomeController> {
     final PdfDownloadController pdfController = Get.put(
       PdfDownloadController(),
     );
-    bool liveStatus =
-        controller.liveTrackingModel?.assignedVehicle?.delayStatus ?? false;
+    // bool liveStatus =
+    //     controller.liveTrackingModel?.assignedVehicle?.delayStatus ?? false;
     return Obx(
       () => Scaffold(
         backgroundColor: Color(0xffd2f8e1),
@@ -42,10 +42,10 @@ class LiveTrackingScreen extends GetView<LiveTrackingHomeController> {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              controller.storeName.value.isEmpty
+              controller.startPointName.value.isEmpty
                   ? TextShimmerEffect(height: 15.0, width: 100.0)
                   : Text(
-                    controller.storeName.value,
+                    controller.startPointName.value,
                     style: CustomTextStyle.subHeading(fontSize: 19.sp),
                   ),
               const SizedBox(height: 4),
@@ -57,14 +57,21 @@ class LiveTrackingScreen extends GetView<LiveTrackingHomeController> {
                         radius: 4,
 
                         backgroundColor:
-                            liveStatus ? Colors.amber : Color(0xff167938),
+                            controller.delayStatus.value
+                                ? Colors.amber
+                                : Color(0xff167938),
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        liveStatus ? 'Delay' : "Pickup On-time",
+                        controller.delayStatus.value
+                            ? 'Delay'
+                            : "Pickup On-time",
                         style: CustomTextStyle.body(
                           fontSize: 14.sp,
-                          color: liveStatus ? Colors.amber : Color(0xff167938),
+                          color:
+                              controller.delayStatus.value
+                                  ? Colors.amber
+                                  : Color(0xff167938),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -132,34 +139,34 @@ class LiveTrackingScreen extends GetView<LiveTrackingHomeController> {
                 mapType: MapType.normal,
                 myLocationButtonEnabled: true,
                 myLocationEnabled: true,
-                style: '''[
-                  {
-                    "elementType": "labels",
-                    "stylers": [{"visibility": "off"}]
-                  },
-                  {
-                    "featureType": "administrative",
-                    "elementType": "labels",
-                    "stylers": [{"visibility": "off"}]
-                  },
-                  {
-                    "featureType": "poi",
-                    "stylers": [{"visibility": "off"}]
-                  },
-                  {
-                    "featureType": "road",
-                    "elementType": "labels",
-                    "stylers": [{"visibility": "off"}]
-                  },
-                  {
-                    "featureType": "transit",
-                    "stylers": [{"visibility": "off"}]
-                  },
-                  {
-                    "featureType": "water",
-                    "stylers": [{"visibility": "simplified"}]
-                  }
-                ]''',
+                // style: '''[
+                //   {
+                //     "elementType": "labels",
+                //     "stylers": [{"visibility": "off"}]
+                //   },
+                //   {
+                //     "featureType": "administrative",
+                //     "elementType": "labels",
+                //     "stylers": [{"visibility": "off"}]
+                //   },
+                //   {
+                //     "featureType": "poi",
+                //     "stylers": [{"visibility": "off"}]
+                //   },
+                //   {
+                //     "featureType": "road",
+                //     "elementType": "labels",
+                //     "stylers": [{"visibility": "off"}]
+                //   },
+                //   {
+                //     "featureType": "transit",
+                //     "stylers": [{"visibility": "off"}]
+                //   },
+                //   {
+                //     "featureType": "water",
+                //     "stylers": [{"visibility": "simplified"}]
+                //   }
+                // ]''',
               ),
             ),
             Align(

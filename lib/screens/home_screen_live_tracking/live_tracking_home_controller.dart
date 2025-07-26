@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,7 @@ import 'liveTracking/liveTrackingDataModel.dart';
 
 class LiveTrackingHomeController extends GetxController {
   RxString storeName = "".obs;
+  RxString startPointName = "".obs;
   RxString deliveryStatus = "Pickup On-time".obs;
   final apiKey = "AIzaSyDqnDn4E0YCF3zaJuS9ez58XOcHhBtNVkc";
 
@@ -32,6 +34,7 @@ class LiveTrackingHomeController extends GetxController {
 
   var driverName = "".obs;
   var managerNumber = "".obs;
+  RxBool delayStatus = false.obs;
   var vehicleNumber = "".obs;
   var temp = "".obs;
   var totalDistance = "".obs;
@@ -41,6 +44,8 @@ class LiveTrackingHomeController extends GetxController {
   late BitmapDescriptor startPointIcon;
   late BitmapDescriptor checkPointsIcon;
   late String id;
+
+  //=========================! On Init !=========================
 
   @override
   Future<void> onInit() async {
@@ -52,6 +57,8 @@ class LiveTrackingHomeController extends GetxController {
 
     startLiveDataFetching();
   }
+
+  //=========================! Custom Marker !=========================
 
   void _loadCustomMarker() async {
     try {
@@ -68,10 +75,13 @@ class LiveTrackingHomeController extends GetxController {
         ImageConstants.storesMarker,
       );
     } catch (e) {
-      print("==>>>e.toString() ${e.toString()}");
+      if (kDebugMode) {
+        print("==>>>e.toString() ${e.toString()}");
+      }
     }
   }
 
+  //=========================! Fetch Live Data Every One Minute !=========================
   void startLiveDataFetching() {
     fetchLiveData();
     _liveDataTimer = Timer.periodic(
@@ -88,6 +98,7 @@ class LiveTrackingHomeController extends GetxController {
     mapController = controller;
   }
 
+  //=========================! Fetch Live Data !=========================
   Future<void> fetchLiveData() async {
     try {
       isLoading.value = true;
@@ -100,7 +111,6 @@ class LiveTrackingHomeController extends GetxController {
         url = ApiConstants().liveTrackingApi;
       }
 
-      log("url========>>>$url");
       final response = await apiService.getRequest(url);
 
       log("ResponseLiveData=>>>>${response.data}");
@@ -114,10 +124,14 @@ class LiveTrackingHomeController extends GetxController {
         vehicleNumber.value = liveTrackingModel?.data?.vehicleno ?? "";
         temp.value = liveTrackingModel?.data?.temperature1.toString() ?? "";
         orderId.value = liveTrackingModel?.data?.vehicleid.toString() ?? "";
+        delayStatus.value =
+            liveTrackingModel?.assignedVehicle?.delayStatus ?? false;
         storeName.value =
             liveTrackingModel?.assignedVehicle?.companyName?.companyName
                 .toString() ??
             "";
+        startPointName.value =
+            liveTrackingModel?.assignedVehicle?.startPointName.toString() ?? "";
         pdfUrl.value =
             liveTrackingModel?.assignedVehicle?.consignmentLink.toString() ??
             "";
@@ -128,12 +142,18 @@ class LiveTrackingHomeController extends GetxController {
 
         await plotRouteWithMarkers(position);
       } else {
-        print(" No live data found");
+        if (kDebugMode) {
+          print(" No live data found");
+        }
       }
     } catch (e) {
-      print(" Error fetching live data: $e");
+      if (kDebugMode) {
+        print(" Error fetching live data: $e");
+      }
     }
   }
+
+  //=========================! Get route points !=========================
 
   Future<List<LatLng>> getRoutePoints({
     required LatLng origin,
@@ -154,7 +174,9 @@ class LiveTrackingHomeController extends GetxController {
 
       final response = await GetConnect().get(url);
 
-      print("==>>> google url ==>>> $url");
+      if (kDebugMode) {
+        print("==>>> google url ==>>> $url");
+      }
 
       if (response.statusCode == 200) {
         final data = response.body;
@@ -177,7 +199,9 @@ class LiveTrackingHomeController extends GetxController {
         throw Exception("Failed to fetch directions: ${response.statusCode}");
       }
     } catch (e) {
-      print(" Error in getRoutePoints: $e");
+      if (kDebugMode) {
+        log(" Error in getRoutePoints: $e");
+      }
       return []; // fallback to empty list
     }
   }
@@ -185,13 +209,15 @@ class LiveTrackingHomeController extends GetxController {
   Future<void> makePhoneCall() async {
     final callingNumber = "+91${managerNumber.value}";
 
-    final Uri _url = Uri(scheme: 'tel', path: callingNumber);
+    final Uri url = Uri(scheme: 'tel', path: callingNumber);
     try {
-      if (!await launchUrl(_url)) {
-        throw Exception('Could not launch $_url');
+      if (!await launchUrl(url)) {
+        throw Exception('Could not launch $url');
       }
     } catch (e) {
-      print("❌ Error launching URL: $e");
+      if (kDebugMode) {
+        print(" Error launching URL: $e");
+      }
     }
   }
 
@@ -220,9 +246,11 @@ class LiveTrackingHomeController extends GetxController {
         [];
 
     for (int i = 0; i < assignedVehicle.checkPoint!.length; i++) {
-      print(
-        "Waypoint===???? ${i + 1}: Lat = ${assignedVehicle.checkPoint![i].lati}, Lng = ${assignedVehicle.checkPoint![i].longi}",
-      );
+      if (kDebugMode) {
+        print(
+          "Waypoint===???? ${i + 1}: Lat = ${assignedVehicle.checkPoint![i].lati}, Lng = ${assignedVehicle.checkPoint![i].longi}",
+        );
+      }
     }
 
     List<LatLng> routePoints = await getRoutePoints(
